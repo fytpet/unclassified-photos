@@ -13,6 +13,6 @@ export async function findUnclassifiedPhotos() {
   }
 
   const unclassifiedPhotos = photos.filter((photo) => !classifiedIds.has(photo.id));
-  logger.info(`Found ${unclassifiedPhotos.length} unclassified photos.`);
+  logger.info(`Found ${unclassifiedPhotos.length} unclassified photos`);
   return unclassifiedPhotos;
 }

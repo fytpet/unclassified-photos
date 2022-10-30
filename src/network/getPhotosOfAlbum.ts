@@ -11,7 +11,7 @@ export async function getPhotosOfAlbum(album: Album) {
   params.append("pageSize", SEARCH_PAGE_SIZE.toString());
   params.append("albumId", album.id);
 
-  logger.verbose(`Loading photos for ${album.title}.`);
+  logger.verbose(`Loading photos for ${album.title}`);
   do {
     const { data } = await apiClient.post<PhotosResponse>(`/v1/mediaItems:search?${params.toString()}`);
 
@@ -21,6 +21,6 @@ export async function getPhotosOfAlbum(album: Album) {
     goToNextPage(params, data.nextPageToken);
   } while (params.has("pageToken"));
 
-  logger.info(`Photos for ${album.title} loaded.`);
+  logger.info(`Photos for ${album.title} loaded`);
   return photos;
 }

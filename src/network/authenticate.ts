@@ -29,9 +29,10 @@ export async function authenticate() {
   logger.verbose("Redirecting user to OAuth provider");
   await open(`${BASE_OAUTH_PROVIDER_URI}/auth?${authCodeParams()}`);
 
+  logger.verbose("Received auth code");
   const code = await promisedCode;
 
-  logger.verbose("Received auth code, closing server");
+  logger.verbose("Closing server");
   server.close();
 
   logger.verbose("Requesting access token");
@@ -39,9 +40,11 @@ export async function authenticate() {
     `${BASE_OAUTH_PROVIDER_URI}/token`,
     accessTokenParams(code)
   );
+
+  logger.verbose("Received access token");
   setAccessToken(access_token);
 
-  logger.info("Received access token, authentication successful");
+  logger.info("Authentication process finished successfully");
 }
 
 function createServer(resolveCode: (value: string) => void) {

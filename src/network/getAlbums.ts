@@ -10,7 +10,7 @@ export async function getAlbums() {
   const params = new URLSearchParams();
   params.append("pageSize", ALBUM_PAGE_SIZE.toString());
 
-  logger.verbose("Loading albums.");
+  logger.verbose("Loading albums");
   do {
     const { data } = await apiClient.get<AlbumsResponse>(`/v1/albums?${params.toString()}`);
 
@@ -20,6 +20,6 @@ export async function getAlbums() {
     goToNextPage(params, data.nextPageToken);
   } while (params.has("pageToken"));
 
-  logger.info("Albums loaded.");
+  logger.info("Albums loaded");
   return albums;
 }

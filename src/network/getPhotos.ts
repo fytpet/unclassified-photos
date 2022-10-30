@@ -10,7 +10,7 @@ export async function getPhotos() {
   const params = new URLSearchParams();
   params.append("pageSize", SEARCH_PAGE_SIZE.toString());
 
-  logger.verbose("Loading photos.");
+  logger.verbose("Loading photos");
   do {
     const { data } = await apiClient.get<PhotosResponse>(`/v1/mediaItems?${params.toString()}`);
 
@@ -20,6 +20,6 @@ export async function getPhotos() {
     goToNextPage(params, data.nextPageToken);
   } while (params.has("pageToken"));
 
-  logger.info("Photos loaded.");
+  logger.info("Photos loaded");
   return photos;
 }

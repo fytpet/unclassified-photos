@@ -10,7 +10,7 @@ export function writeToFile(photos: Photo[]) {
     JSON.stringify(photos, null, 2),
     (error) => {
       if (error) throw error;
-      logger.info(`Successfully wrote output to ${OUTPUT_FILE}`);
+      logger.info(`Output saved to ${OUTPUT_FILE}`);
     }
   );
 }
