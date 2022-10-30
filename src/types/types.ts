@@ -31,3 +31,7 @@ interface MediaMetadata {
   width: string;
   height: string;
 }
+
+export interface AccessTokenResponse {
+  access_token: string;
+}

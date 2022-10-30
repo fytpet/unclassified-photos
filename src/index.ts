@@ -1,10 +1,14 @@
-import { AxiosError } from "axios";
 import { findUnclassifiedPhotos } from "./findUnclassifiedPhotos";
+import { authenticate } from "./network/authenticate";
 import { logger } from "./utils/logger";
 import { writeToFile } from "./utils/writeToFile";
 
 async function main() {
-  writeToFile(await findUnclassifiedPhotos());
+  await authenticate();
+  const unclassifiedPhotos = await findUnclassifiedPhotos();
+  writeToFile(unclassifiedPhotos);
 }
 
-void main().catch((error: AxiosError) => logger.error(JSON.stringify(error, null, 2)));
+void main().catch((error) => {
+  logger.error(error);
+});
