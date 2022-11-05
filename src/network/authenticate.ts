@@ -1,10 +1,9 @@
-import axios from "axios";
 import dotenv from "dotenv";
 import express from "express";
 import open from "open";
 import { AccessTokenResponse } from "../types/types";
 import { logger } from "../utils/logger";
-import { setAccessToken } from "./apiClient";
+import { apiClient, setAccessToken } from "./apiClient";
 
 dotenv.config();
 
@@ -36,9 +35,10 @@ export async function authenticate() {
   server.close();
 
   logger.verbose("Requesting access token");
-  const { data: { access_token } } = await axios.post<AccessTokenResponse>(
-    `${BASE_OAUTH_PROVIDER_URI}/token`,
-    accessTokenParams(code)
+  const { data: { access_token } } = await apiClient.post<AccessTokenResponse>(
+    "/token",
+    accessTokenParams(code),
+    { baseURL: BASE_OAUTH_PROVIDER_URI }
   );
 
   logger.verbose("Received access token");
