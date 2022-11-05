@@ -67,7 +67,7 @@ function createServer(resolveCode: (value: string) => void) {
 
 function authCodeParams() {
   const params = new URLSearchParams();
-  params.append("client_id", process.env.CLIENT_ID);
+  params.append("client_id", process.env.GOOGLE_CLIENT_ID);
   params.append("redirect_uri", REDIRECT_URI);
   params.append("response_type", RESPONSE_TYPE);
   params.append("scope", PHOTOS_LIBRARY_READONLY_SCOPE);
@@ -76,8 +76,8 @@ function authCodeParams() {
 
 function accessTokenParams(code: string) {
   const params = new URLSearchParams();
-  params.append("client_id", process.env.CLIENT_ID);
-  params.append("client_secret", process.env.CLIENT_SECRET);
+  params.append("client_id", process.env.GOOGLE_CLIENT_ID);
+  params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
   params.append("code", code);
   params.append("grant_type", GRANT_TYPE);
   params.append("redirect_uri", REDIRECT_URI);
