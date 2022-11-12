@@ -16,10 +16,6 @@ apiClient.interceptors.response.use(
   (error: AxiosError) => Promise.reject(error.response?.data)
 );
 
-export function setAccessToken(accessToken: string) {
-  apiClient.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-}
-
 export function goToNextPage(params: URLSearchParams, nextPageToken: string) {
   if (nextPageToken) {
     params.set("pageToken", nextPageToken);

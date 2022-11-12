@@ -4,7 +4,7 @@ import { apiClient, goToNextPage } from "./apiClient";
 
 const ALBUM_PAGE_SIZE = 50;
 
-export async function getAlbums() {
+export async function getAlbums(accessToken: string) {
   let albums: Album[] = [];
 
   const params = new URLSearchParams();
@@ -12,7 +12,10 @@ export async function getAlbums() {
 
   logger.verbose("Loading albums");
   do {
-    const { data } = await apiClient.get<AlbumsResponse>(`/v1/albums?${params.toString()}`);
+    const { data } = await apiClient.get<AlbumsResponse>(
+      `/v1/albums?${params.toString()}`,
+      { headers: { "Authorization" : `Bearer ${accessToken}` } }
+    );
 
     albums = albums.concat(data.albums.filter((album: Album) => !!album));
     logger.verbose(`Received ${albums.length} albums`);

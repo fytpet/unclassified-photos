@@ -4,7 +4,7 @@ import { apiClient, goToNextPage } from "./apiClient";
 
 const SEARCH_PAGE_SIZE = 100;
 
-export async function getPhotos() {
+export async function getPhotos(accessToken: string) {
   let photos: Photo[] = [];
 
   const params = new URLSearchParams();
@@ -12,7 +12,10 @@ export async function getPhotos() {
 
   logger.verbose("Loading photos");
   do {
-    const { data } = await apiClient.get<PhotosResponse>(`/v1/mediaItems?${params.toString()}`);
+    const { data } = await apiClient.get<PhotosResponse>(
+      `/v1/mediaItems?${params.toString()}`,
+      { headers: { "Authorization" : `Bearer ${accessToken}` } }
+    );
 
     photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
     logger.verbose(`Received ${photos.length} photos`);
