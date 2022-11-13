@@ -1,6 +1,7 @@
 import express, { Request } from "express";
 import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
 import { PhotosService } from "../services/PhotosService";
+import { testData } from "../testData";
 import { logger } from "../utils/logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
@@ -11,7 +12,11 @@ const photosService = new PhotosService();
 export const router = express.Router();
 
 router.get("/", (_, res) => {
-  res.redirect(`${process.env.BASE_URI}/home.html`);
+  res.render("home");
+});
+
+router.get("/login", (_, res) => {
+  res.render("login");
 });
 
 router.get("/oauth", (_, res) => {
@@ -33,10 +38,10 @@ router.get("/oauth/redirect", (req, res) => {
     throw new Error("Could not parse auth code");
   }
   res.cookie("auth_code", code);
-  res.redirect(`${process.env.BASE_URI}/home.html`);
+  res.redirect("/");
 });
 
-router.get("/unclassified-photos", (req: Request, res) => {
+router.get("/results", (req: Request, res) => {
   const getUnclassifiedPhotos = async () => {
     const { auth_code } = req.cookies as { auth_code?: string };
 
@@ -45,13 +50,16 @@ router.get("/unclassified-photos", (req: Request, res) => {
       return;
     }
 
-    const unclassifiedPhotos = await photosService.findUnclassifiedPhotos(auth_code);
-    res.send(unclassifiedPhotos);
+    res.render("results", { photos: testData });
+    return;
+
+    const unclassifiedPhotos = await photosService.findUnclassifiedPhotos(auth_code || "");
+    res.render("results", { photos: unclassifiedPhotos });
   };
 
   getUnclassifiedPhotos().catch((e) => {
     logger.error(e);
     res.clearCookie("auth_code");
-    res.redirect(`${process.env.BASE_URI}/home.html`);
+    res.render("home");
   });
 });

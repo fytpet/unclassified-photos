@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Unclassified Photos</title>
+</head>
+
+<body>
+  <p>Logged in</p>
+  <ul>
+    <% for (const photo of photos) { %>
+      <li>
+        <a href="<%= photo.productUrl %>">
+          <img src="<%= photo.baseUrl %>" alt="<%= photo.filename %>" referrerpolicy="no-referrer" />
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</body>
+
+</html>

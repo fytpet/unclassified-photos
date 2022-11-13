@@ -5,15 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Unclassified Photos</title>
+  <script src="./cookies.js"></script>
   <script>
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-    }
     const authCode = getCookie("auth_code");
     if (authCode) {
-      window.location = "/home.html";
+      window.location = "/";
     }
   </script>
 </head>

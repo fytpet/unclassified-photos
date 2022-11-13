@@ -1,5 +1,6 @@
 .vscode/
 build/
 node_modules/
+/public/*.js
+/public/*.js.map
 .env
-output.json
