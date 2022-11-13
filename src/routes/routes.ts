@@ -1,7 +1,6 @@
 import express, { Request } from "express";
 import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
 import { PhotosService } from "../services/PhotosService";
-import { testData } from "../testData";
 import { logger } from "../utils/logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
@@ -49,9 +48,6 @@ router.get("/results", (req: Request, res) => {
       res.sendStatus(401);
       return;
     }
-
-    res.render("results", { photos: testData });
-    return;
 
     const unclassifiedPhotos = await photosService.findUnclassifiedPhotos(auth_code || "");
     res.render("results", { photos: unclassifiedPhotos });

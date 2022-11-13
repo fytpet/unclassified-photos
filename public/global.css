@@ -7,3 +7,16 @@ nav {
   justify-content: space-between;
   align-items: center;
 }
+
+.photos-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.photos-grid__photo {
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+  margin: 5px;
+}

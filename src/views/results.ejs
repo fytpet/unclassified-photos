@@ -5,19 +5,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Unclassified Photos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="global.css">
+  <script src="./cookies.js"></script>
+  <script>
+    function signOut() {
+      deleteCookie("auth_code");
+      window.location = "/login";
+    }
+  </script>
 </head>
 
 <body>
-  <p>Logged in</p>
-  <ul>
-    <% for (const photo of photos) { %>
-      <li>
+  <nav class="has-background-primary p-2">
+    <a class="is-size-4 has-text-weight-bold has-text-white" href="/">Unclassified Photos</a>
+    <button class="button is-light" onclick="signOut()">Sign out</button>
+  </nav>
+  <section class="section">
+    <p class="is-size-5 pb-5">
+      You have <%= photos.length %> unclassified photos.
+    </p>
+    <div class="photos-grid">
+      <% for (const photo of photos) { %>
         <a href="<%= photo.productUrl %>">
-          <img src="<%= photo.baseUrl %>" alt="<%= photo.filename %>" referrerpolicy="no-referrer" />
+          <img
+            class="photos-grid__photo"
+            src="<%= photo.baseUrl %>"
+            alt="<%= photo.filename %>"
+            referrerpolicy="no-referrer"
+          />
         </a>
-      </li>
-    <% } %>
-  </ul>
+      <% } %>
+    </div>
+    <a class="has-text-link" href="/">Go back</a>
+  </section>
 </body>
 
 </html>
