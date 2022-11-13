@@ -1,6 +1,7 @@
 import express, { Request } from "express";
 import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
 import { PhotosService } from "../services/PhotosService";
+import { Cookie } from "../types/types";
 import { logger } from "../utils/logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
@@ -10,12 +11,26 @@ const photosService = new PhotosService();
 
 export const router = express.Router();
 
-router.get("/", (_, res) => {
+router.get("/", (req, res) => {
+  const { auth_code } = req.cookies as Cookie;
+
+  if (!auth_code) {
+    res.redirect("/login");
+    return;
+  }
+
   res.render("home");
 });
 
-router.get("/login", (_, res) => {
-  res.render("login");
+router.get("/login", (req, res) => {
+  const { auth_code } = req.cookies as Cookie;
+
+  if (auth_code) {
+    res.redirect("/");
+    return;
+  }
+
+  res.render("login", { error: popError(req) });
 });
 
 router.get("/oauth", (_, res) => {
@@ -30,10 +45,10 @@ router.get("/oauth", (_, res) => {
 
 router.get("/oauth/redirect", (req, res) => {
   const { code, error } = req.query;
-  if (typeof (error) === "string") {
+  if (typeof(error) === "string") {
     throw new Error(error);
   }
-  if (typeof (code) !== "string") {
+  if (typeof(code) !== "string") {
     throw new Error("Could not parse auth code");
   }
   res.cookie("auth_code", code);
@@ -42,10 +57,11 @@ router.get("/oauth/redirect", (req, res) => {
 
 router.get("/results", (req: Request, res) => {
   const getUnclassifiedPhotos = async () => {
-    const { auth_code } = req.cookies as { auth_code?: string };
+    const { auth_code } = req.cookies as Cookie;
 
     if (!auth_code) {
-      res.sendStatus(401);
+      req.session.error = "Could not view results while signed out. Sign in and try again.";
+      res.redirect("/login");
       return;
     }
 
@@ -59,3 +75,9 @@ router.get("/results", (req: Request, res) => {
     res.render("home");
   });
 });
+
+function popError(req: Request) {
+  const { error } = req.session;
+  delete req.session.error;
+  return error;
+}

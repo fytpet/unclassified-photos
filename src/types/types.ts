@@ -35,3 +35,7 @@ interface MediaMetadata {
 export interface AccessTokenResponse {
   access_token: string;
 }
+
+export interface Cookie {
+  auth_code?: string;
+}
