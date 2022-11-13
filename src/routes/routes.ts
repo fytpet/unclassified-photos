@@ -41,6 +41,7 @@ router.get("/oauth", (_, res) => {
   params.append("redirect_uri", REDIRECT_URI);
   params.append("response_type", RESPONSE_TYPE);
   params.append("scope", PHOTOS_LIBRARY_READONLY_SCOPE);
+  params.append("prompt", "select_account");
 
   res.redirect(`${OAUTH_PROVIDER_BASE_URL}/auth?${params.toString()}`);
 });
