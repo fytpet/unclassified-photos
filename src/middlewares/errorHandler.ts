@@ -8,6 +8,10 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
 
   logger.error(err.message);
   req.session.error = err.message;
-  req.session.destroy((err) => logger.error(err));
+  req.session.destroy((err) => {
+    if (err) {
+      logger.error(err);
+    }
+  });
   res.redirect("/sign-in");
 }

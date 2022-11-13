@@ -27,7 +27,11 @@ router.get("/sign-in", (req, res) => {
 });
 
 router.get("/sign-out", (req, res) => {
-  req.session.destroy((err) => logger.error(err));
+  req.session.destroy((err) => {
+    if (err) {
+      logger.error(err);
+    }
+  });
   res.redirect("/sign-in");
 });
 
