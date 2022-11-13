@@ -1,9 +1,7 @@
 import express, { Request } from "express";
+import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
 import { PhotosService } from "../services/PhotosService";
 import { logger } from "../utils/logger";
-
-export const REDIRECT_URI = `${process.env.BASE_URI}/oauth/redirect`;
-export const BASE_OAUTH_PROVIDER_URI = "https://accounts.google.com/o/oauth2";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 const RESPONSE_TYPE = "code";
@@ -23,7 +21,7 @@ router.get("/oauth", (_, res) => {
   params.append("response_type", RESPONSE_TYPE);
   params.append("scope", PHOTOS_LIBRARY_READONLY_SCOPE);
 
-  res.redirect(`${BASE_OAUTH_PROVIDER_URI}/auth?${params.toString()}`);
+  res.redirect(`${OAUTH_PROVIDER_BASE_URL}/auth?${params.toString()}`);
 });
 
 router.get("/oauth/redirect", (req, res) => {

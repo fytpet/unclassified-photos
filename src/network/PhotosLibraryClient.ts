@@ -1,20 +1,20 @@
 import axios, { AxiosError } from "axios";
-import { REDIRECT_URI, BASE_OAUTH_PROVIDER_URI } from "../routes/routes";
 import { AccessTokenResponse, Album, AlbumsResponse, Photo, PhotosResponse } from "../types/types";
 import { logger } from "../utils/logger";
 
-const API_ENDPOINT = "https://photoslibrary.googleapis.com";
+const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
+export const OAUTH_PROVIDER_BASE_URL = "https://accounts.google.com/o/oauth2";
+export const REDIRECT_URI = `${process.env.BASE_URI}/oauth/redirect`;
 const GRANT_TYPE = "authorization_code";
-
 const ALBUM_PAGE_SIZE = 50;
 const SEARCH_PAGE_SIZE = 100;
 
-export class PhotosApiClient {
+export class PhotosLibraryClient {
   private apiClient;
 
   constructor() {
     this.apiClient = axios.create({
-      baseURL: API_ENDPOINT,
+      baseURL: PHOTOS_LIBRARY_BASE_URL,
       headers: {
         common: {
           "Content-Type": "application/json"
@@ -34,13 +34,13 @@ export class PhotosApiClient {
     params.append("client_id", process.env.GOOGLE_CLIENT_ID);
     params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
     params.append("code", authCode);
-    params.append("grant_type", GRANT_TYPE);
     params.append("redirect_uri", REDIRECT_URI);
+    params.append("grant_type", GRANT_TYPE);
 
     const { data: { access_token: accessToken } } = await this.apiClient.post<AccessTokenResponse>(
       "/token",
       params.toString(),
-      { baseURL: BASE_OAUTH_PROVIDER_URI }
+      { baseURL: OAUTH_PROVIDER_BASE_URL }
     );
   
     logger.verbose("Received access token");

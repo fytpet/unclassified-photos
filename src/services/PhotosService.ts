@@ -1,18 +1,18 @@
-import { PhotosApiClient } from "../network/PhotosApiClient";
+import { PhotosLibraryClient } from "../network/PhotosLibraryClient";
 import { logger } from "../utils/logger";
 
 export class PhotosService {
-  private photosApiClient = new PhotosApiClient();
+  private client = new PhotosLibraryClient();
 
   async findUnclassifiedPhotos(authCode: string) {
-    const accessToken = await this.photosApiClient.createAccessToken(authCode);
-    const photos = await this.photosApiClient.getPhotos(accessToken);
-    const albums = await this.photosApiClient.getAlbums(accessToken);
+    const accessToken = await this.client.createAccessToken(authCode);
+    const photos = await this.client.getPhotos(accessToken);
+    const albums = await this.client.getAlbums(accessToken);
   
     const classifiedIds = new Set<string>();
   
     for (const album of albums) {
-      const albumPhotos = await this.photosApiClient.getPhotosOfAlbum(album, accessToken);
+      const albumPhotos = await this.client.getPhotosOfAlbum(album, accessToken);
       albumPhotos.forEach((albumPhoto) => classifiedIds.add(albumPhoto.id));
     }
   
