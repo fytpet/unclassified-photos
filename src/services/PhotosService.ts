@@ -3,17 +3,21 @@ import { logger } from "../utils/logger";
 
 export class PhotosService {
   static async findUnclassifiedPhotos(accessToken: string) {
-    const photos = await PhotosLibraryClient.getPhotos(accessToken);
-    const albums = await PhotosLibraryClient.getAlbums(accessToken);
+    const [photos, albums] = await Promise.all([
+      PhotosLibraryClient.getPhotos(accessToken),
+      PhotosLibraryClient.getAlbums(accessToken)
+    ]);
   
     const classifiedIds = new Set<string>();
-  
-    for (const album of albums) {
-      const albumPhotos = await PhotosLibraryClient.getPhotosOfAlbum(album, accessToken);
-      albumPhotos.forEach((albumPhoto) => classifiedIds.add(albumPhoto.id));
-    }
+
+    const photosInAlbums = await Promise.all(
+      albums.map((album) => PhotosLibraryClient.getPhotosOfAlbum(album, accessToken))
+    );
+
+    photosInAlbums.flat().forEach((albumPhoto) => classifiedIds.add(albumPhoto.id));
   
     const unclassifiedPhotos = photos.filter((photo) => !classifiedIds.has(photo.id));
+
     logger.info(`Found ${unclassifiedPhotos.length} unclassified photos`);
     return unclassifiedPhotos;
   }
