@@ -5,10 +5,15 @@
     <p class="is-size-5 pb-5">
       Search your Google Photos Library for any unclassified photos (photos that are not in any album).
     </p>
-    <a href="/results">
-      <button class="button is-primary">Search</button>
-    </a>
+    <form method="post" action="/">
+      <button id="search-button" class="button is-primary" type="submit" onclick="onSubmit()">Search</input>
+    </form>
   </section>
+  <script>
+    function onSubmit() {
+      document.querySelector("#search-button").classList.add("is-loading");
+    }
+  </script>
 </body>
 
 </html>

@@ -58,7 +58,7 @@ router.get("/oauth/redirect", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.get("/results", (req, res, next) => {
+router.post("/", (req, res, next) => {
   const { bearer } = req.session;
 
   if (!bearer) {
