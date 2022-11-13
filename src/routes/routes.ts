@@ -1,7 +1,7 @@
 import express, { Request } from "express";
 import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/OAuthProviderClient";
 import { PhotosService } from "../services/PhotosService";
-import { logger } from "../utils/logger";
+import { Logger } from "../utils/Logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 const RESPONSE_TYPE = "code";
@@ -29,7 +29,7 @@ router.get("/sign-in", (req, res) => {
 router.get("/sign-out", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      logger.error(err);
+      Logger.error(err, req.sessionID);
     }
   });
   res.redirect("/sign-in");
@@ -55,7 +55,7 @@ router.get("/oauth/redirect", (req, res, next) => {
     throw new Error("Could not sign you in: authentication failed");
   }
 
-  OAuthProviderClient.createAccessToken(code)
+  OAuthProviderClient.createAccessToken(req.sessionID, code)
     .then((accessToken) => {
       req.session.bearer = accessToken;
       res.redirect("/");
@@ -70,7 +70,7 @@ router.post("/", (req, res, next) => {
     throw new Error("Could not view results while signed out. Sign in and try again.");
   }
 
-  PhotosService.findUnclassifiedPhotos(bearer)
+  PhotosService.findUnclassifiedPhotos({ id: req.sessionID, bearer })
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });

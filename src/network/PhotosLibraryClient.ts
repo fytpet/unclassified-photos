@@ -1,79 +1,79 @@
-import { Album, AlbumsResponse, Photo, PhotosResponse } from "../types/types";
-import { logger } from "../utils/logger";
+import { Album, AlbumsResponse, Photo, PhotosResponse, Session } from "../types/types";
+import { Logger } from "../utils/Logger";
 import { apiClient } from "./apiClient";
 
 const ALBUM_PAGE_SIZE = 50;
 const SEARCH_PAGE_SIZE = 100;
 
 export class PhotosLibraryClient {
-  static async getPhotos(bearer: string) {
+  static async getPhotos(session: Session) {
     let photos: Photo[] = [];
   
     const params = new URLSearchParams();
     params.append("pageSize", SEARCH_PAGE_SIZE.toString());
   
-    logger.verbose("Loading photos");
+    Logger.verbose("Loading photos", session.id);
     do {
       const { data } = await apiClient.get<PhotosResponse>(
         `/v1/mediaItems?${params.toString()}`,
-        { headers: { "Authorization" : `Bearer ${bearer}` } }
+        { headers: { "Authorization" : `Bearer ${session.bearer}` } }
       );
   
       photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
-      logger.verbose(`Received ${photos.length} photos`);
+      Logger.verbose(`Received ${photos.length} photos`, session.id);
   
       goToNextPage(params, data.nextPageToken);
     } while (params.has("pageToken"));
   
-    logger.info("Photos loaded");
+    Logger.info("Photos loaded", session.id);
     return photos;
   }
 
-  static async getAlbums(bearer: string) {
+  static async getAlbums(session: Session) {
     let albums: Album[] = [];
   
     const params = new URLSearchParams();
     params.append("pageSize", ALBUM_PAGE_SIZE.toString());
   
-    logger.verbose("Loading albums");
+    Logger.verbose("Loading albums", session.id);
     do {
       const { data } = await apiClient.get<AlbumsResponse>(
         `/v1/albums?${params.toString()}`,
-        { headers: { "Authorization" : `Bearer ${bearer}` } }
+        { headers: { "Authorization" : `Bearer ${session.bearer}` } }
       );
   
       albums = albums.concat(data.albums.filter((album: Album) => !!album));
-      logger.verbose(`Received ${albums.length} albums`);
+      Logger.verbose(`Received ${albums.length} albums`, session.id);
   
       goToNextPage(params, data.nextPageToken);
     } while (params.has("pageToken"));
   
-    logger.info("Albums loaded");
+    Logger.info("Albums loaded", session.id);
     return albums;
   }
 
-  static async getPhotosOfAlbum(album: Album, bearer: string) {
+  static async getPhotosOfAlbum(album: Album, session: Session) {
     let photos: Photo[] = [];
   
     const params = new URLSearchParams();
     params.append("pageSize", SEARCH_PAGE_SIZE.toString());
     params.append("albumId", album.id);
 
-    logger.verbose(`Loading photos for ${album.title}`);
+    Logger.verbose(`Loading photos for ${album.title}`, session.id);
     do {
       const { data } = await apiClient.post<PhotosResponse>(
         `/v1/mediaItems:search?${params.toString()}`,
         undefined,
-        { headers: { "Authorization" : `Bearer ${bearer}` } }
+        { headers: { "Authorization" : `Bearer ${session.bearer}` } }
       );
         
       photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
-      logger.verbose(`Received ${photos.length} photos for ${album.title}`);
+      Logger.verbose(`Received ${photos.length} photos for ${album.title}`, session.id);
     
       goToNextPage(params, data.nextPageToken);
     } while (params.has("pageToken"));
 
-    logger.info(`Photos for ${album.title} loaded`);
+    Logger.info(`Photos for ${album.title} loaded`, session.id);
     return photos;
   }
 }

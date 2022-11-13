@@ -1,16 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-import { logger } from "../utils/logger";
+import { NextFunction, Request, Response } from "express";
+import { Logger } from "../utils/Logger";
 
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   if (res.headersSent) {
     return next(err);
   }
 
-  logger.error(err.message);
+  Logger.error(err, req.sessionID);
   req.session.error = err.message;
   req.session.destroy((err) => {
     if (err) {
-      logger.error(err);
+      Logger.error(err, req.sessionID);
     }
   });
   res.redirect("/sign-in");

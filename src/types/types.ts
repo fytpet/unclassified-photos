@@ -40,3 +40,8 @@ export interface AccessTokenError {
   error: string;
   error_description: string;
 }
+
+export interface Session {
+  id: string;
+  bearer: string;
+}

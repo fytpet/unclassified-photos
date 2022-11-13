@@ -1,5 +1,5 @@
 import { AccessTokenResponse } from "../types/types";
-import { logger } from "../utils/logger";
+import { Logger } from "../utils/Logger";
 import { apiClient } from "./apiClient";
 
 export const OAUTH_PROVIDER_BASE_URL = "https://accounts.google.com/o/oauth2";
@@ -7,8 +7,8 @@ export const REDIRECT_URI = `${process.env.BASE_URI}/oauth/redirect`;
 const GRANT_TYPE = "authorization_code";
 
 export class OAuthProviderClient {
-  static async createAccessToken(authCode: string) {
-    logger.verbose("Requesting access token");
+  static async createAccessToken(sessionId: string, authCode: string) {
+    Logger.verbose("Requesting access token", sessionId);
 
     const params = new URLSearchParams();
     params.append("client_id", process.env.GOOGLE_CLIENT_ID);
@@ -23,7 +23,7 @@ export class OAuthProviderClient {
       { baseURL: OAUTH_PROVIDER_BASE_URL }
     );
   
-    logger.verbose("Received access token");
+    Logger.verbose("Received access token", sessionId);
     return accessToken;
   }
 }

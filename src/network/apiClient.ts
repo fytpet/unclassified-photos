@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { AccessTokenError } from "../types/types";
-import { logger } from "../utils/logger";
+import { Logger } from "../utils/Logger";
 
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 
@@ -17,7 +17,7 @@ apiClient.interceptors.response.use(
   (config) => config,
   (err: AxiosError) => {
     const data = err.response?.data;
-    logger.error(data);
+    Logger.error(data);
     if ((data as AccessTokenError).error === "invalid_grant") {
       throw new Error("You have been signed out due to inactivity. Try signing in again.");
     }
