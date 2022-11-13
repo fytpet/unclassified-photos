@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Unclassified Photos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="global.css">
   <script src="./cookies.js"></script>
   <script>
     const authCode = getCookie("auth_code");
@@ -15,9 +17,17 @@
 </head>
 
 <body>
-  <a href="/oauth">
-    <button>Sign in with Google</button>
-  </a>
+  <nav class="has-background-primary p-2">
+    <a class="is-size-4 has-text-weight-bold has-text-white" href="/">Unclassified Photos</a>
+  </nav>
+  <section class="section">
+    <p class="is-size-5 pb-5">
+      Search your Google Photos Library for any unclassified photos (photos that are not in any album).
+    </p>
+    <a href="/oauth">
+      <button class="button is-primary">Sign in with Google</button>
+    </a>
+  </section>
 </body>
 
 </html>
