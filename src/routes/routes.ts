@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
     return;
   }
 
-  res.render("home");
+  res.render("pages/home");
 });
 
 router.get("/sign-in", (req, res) => {
@@ -25,7 +25,7 @@ router.get("/sign-in", (req, res) => {
     return;
   }
 
-  res.render("signIn", { error: popError(req) });
+  res.render("pages/signIn", { error: popError(req) });
 });
 
 router.get("/sign-out", (_, res) => {
@@ -66,7 +66,7 @@ router.get("/results", (req, res, next) => {
   }
 
   photosService.findUnclassifiedPhotos(auth_code || "")
-    .then((photos) => res.render("results", { photos }))
+    .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });
 
