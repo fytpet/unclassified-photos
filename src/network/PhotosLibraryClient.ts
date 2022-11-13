@@ -23,8 +23,8 @@ export class PhotosLibraryClient {
     });
     this.apiClient.interceptors.response.use(
       (config) => config,
-      (error: AxiosError) => {
-        const data = error.response?.data;
+      (err: AxiosError) => {
+        const data = err.response?.data;
         logger.error(data);
         if ((data as AccessTokenError).error === "invalid_grant") {
           throw new Error("You have been signed out due to inactivity. Try signing in again.");

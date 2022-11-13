@@ -1,8 +1,7 @@
-import express, { Request, Response } from "express";
+import express, { Request } from "express";
 import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
 import { PhotosService } from "../services/PhotosService";
 import { Cookie } from "../types/types";
-import { logger } from "../utils/logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 const RESPONSE_TYPE = "code";
@@ -47,42 +46,33 @@ router.get("/oauth", (_, res) => {
 router.get("/oauth/redirect", (req, res) => {
   const { code, error } = req.query;
   if (typeof(error) === "string") {
-    handleUnauthenticated(req, res, new Error(`Could not sign you in: ${error}`));
+    throw new Error(`Could not sign you in: ${error}`);
     return;
   }
   if (typeof(code) !== "string") {
-    handleUnauthenticated(req, res, new Error("Could not sign you in: authentication failed"));
+    throw new Error("Could not sign you in: authentication failed");
     return;
   }
   res.cookie("auth_code", code);
   res.redirect("/");
 });
 
-router.get("/results", (req, res) => {
+router.get("/results", (req, res, next) => {
   const { auth_code } = req.cookies as Cookie;
 
   if (!isAuthenticated(req)) {
-    handleUnauthenticated(req, res, new Error("Could not view results while signed out. Sign in and try again."));
+    throw new Error("Could not view results while signed out. Sign in and try again.");
     return;
   }
 
   photosService.findUnclassifiedPhotos(auth_code || "")
     .then((photos) => res.render("results", { photos }))
-    .catch((error: Error) => {
-      handleUnauthenticated(req, res, error);
-    });
+    .catch((err) => next(err));
 });
 
 function isAuthenticated(req: Request): boolean {
   const { auth_code } = req.cookies as Cookie;
   return !!auth_code;
-}
-
-function handleUnauthenticated(req: Request, res: Response, error: Error) {
-  logger.error(error.message);
-  req.session.error = error.message;
-  res.clearCookie("auth_code");
-  res.redirect("/sign-in");
 }
 
 function popError(req: Request) {
