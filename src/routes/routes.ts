@@ -1,12 +1,10 @@
 import express, { Request } from "express";
-import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
+import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/OAuthProviderClient";
 import { PhotosService } from "../services/PhotosService";
-import { Cookie } from "../types/types";
+import { logger } from "../utils/logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 const RESPONSE_TYPE = "code";
-
-const photosService = new PhotosService();
 
 export const router = express.Router();
 
@@ -28,8 +26,8 @@ router.get("/sign-in", (req, res) => {
   res.render("pages/signIn", { error: popError(req) });
 });
 
-router.get("/sign-out", (_, res) => {
-  res.clearCookie("auth_code");
+router.get("/sign-out", (req, res) => {
+  req.session.destroy((err) => logger.error(err));
   res.redirect("/sign-in");
 });
 
@@ -43,36 +41,41 @@ router.get("/oauth", (_, res) => {
   res.redirect(`${OAUTH_PROVIDER_BASE_URL}/auth?${params.toString()}`);
 });
 
-router.get("/oauth/redirect", (req, res) => {
+router.get("/oauth/redirect", (req, res, next) => {
   const { code, error } = req.query;
   if (typeof(error) === "string") {
     throw new Error(`Could not sign you in: ${error}`);
-    return;
   }
   if (typeof(code) !== "string") {
     throw new Error("Could not sign you in: authentication failed");
-    return;
   }
-  res.cookie("auth_code", code);
-  res.redirect("/");
+
+  OAuthProviderClient.createAccessToken(code)
+    .then((accessToken) => {
+      req.session.bearer = accessToken;
+      res.redirect("/");
+    })
+    .catch((err) => next(err));
 });
 
 router.get("/results", (req, res, next) => {
-  const { auth_code } = req.cookies as Cookie;
+  const { bearer } = req.session;
 
-  if (!isAuthenticated(req)) {
+  if (!bearer) {
     throw new Error("Could not view results while signed out. Sign in and try again.");
-    return;
   }
 
-  photosService.findUnclassifiedPhotos(auth_code || "")
+  PhotosService.findUnclassifiedPhotos(bearer)
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });
 
+router.get("*", (_, res) => {
+  res.redirect("/");
+});
+
 function isAuthenticated(req: Request): boolean {
-  const { auth_code } = req.cookies as Cookie;
-  return !!auth_code;
+  return !!req.session.bearer;
 }
 
 function popError(req: Request) {

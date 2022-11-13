@@ -2,17 +2,14 @@ import { PhotosLibraryClient } from "../network/PhotosLibraryClient";
 import { logger } from "../utils/logger";
 
 export class PhotosService {
-  private client = new PhotosLibraryClient();
-
-  async findUnclassifiedPhotos(authCode: string) {
-    const accessToken = await this.client.createAccessToken(authCode);
-    const photos = await this.client.getPhotos(accessToken);
-    const albums = await this.client.getAlbums(accessToken);
+  static async findUnclassifiedPhotos(accessToken: string) {
+    const photos = await PhotosLibraryClient.getPhotos(accessToken);
+    const albums = await PhotosLibraryClient.getAlbums(accessToken);
   
     const classifiedIds = new Set<string>();
   
     for (const album of albums) {
-      const albumPhotos = await this.client.getPhotosOfAlbum(album, accessToken);
+      const albumPhotos = await PhotosLibraryClient.getPhotosOfAlbum(album, accessToken);
       albumPhotos.forEach((albumPhoto) => classifiedIds.add(albumPhoto.id));
     }
   

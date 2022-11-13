@@ -40,7 +40,3 @@ export interface AccessTokenError {
   error: string;
   error_description: string;
 }
-
-export interface Cookie {
-  auth_code?: string;
-}
