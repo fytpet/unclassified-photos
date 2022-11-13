@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { AccessTokenResponse, Album, AlbumsResponse, Photo, PhotosResponse } from "../types/types";
+import { AccessTokenError, AccessTokenResponse, Album, AlbumsResponse, Photo, PhotosResponse } from "../types/types";
 import { logger } from "../utils/logger";
 
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
@@ -23,7 +23,14 @@ export class PhotosLibraryClient {
     });
     this.apiClient.interceptors.response.use(
       (config) => config,
-      (error: AxiosError) => Promise.reject(error.response?.data)
+      (error: AxiosError) => {
+        const data = error.response?.data;
+        logger.error(data);
+        if ((data as AccessTokenError).error === "invalid_grant") {
+          throw new Error("You have been signed out due to inactivity. Try signing in again.");
+        }
+        throw new Error("An unknown error occurred. Try again later.");
+      }
     );
   }
 

@@ -36,6 +36,11 @@ export interface AccessTokenResponse {
   access_token: string;
 }
 
+export interface AccessTokenError {
+  error: string;
+  error_description: string;
+}
+
 export interface Cookie {
   auth_code?: string;
 }

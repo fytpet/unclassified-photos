@@ -1,4 +1,4 @@
-import express, { Request } from "express";
+import express, { Request, Response } from "express";
 import { OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/PhotosLibraryClient";
 import { PhotosService } from "../services/PhotosService";
 import { Cookie } from "../types/types";
@@ -12,25 +12,26 @@ const photosService = new PhotosService();
 export const router = express.Router();
 
 router.get("/", (req, res) => {
-  const { auth_code } = req.cookies as Cookie;
-
-  if (!auth_code) {
-    res.redirect("/login");
+  if (!isAuthenticated(req)) {
+    res.redirect("/sign-in");
     return;
   }
 
   res.render("home");
 });
 
-router.get("/login", (req, res) => {
-  const { auth_code } = req.cookies as Cookie;
-
-  if (auth_code) {
+router.get("/sign-in", (req, res) => {
+  if (isAuthenticated(req)) {
     res.redirect("/");
     return;
   }
 
-  res.render("login", { error: popError(req) });
+  res.render("signIn", { error: popError(req) });
+});
+
+router.get("/sign-out", (_, res) => {
+  res.clearCookie("auth_code");
+  res.redirect("/sign-in");
 });
 
 router.get("/oauth", (_, res) => {
@@ -46,35 +47,43 @@ router.get("/oauth", (_, res) => {
 router.get("/oauth/redirect", (req, res) => {
   const { code, error } = req.query;
   if (typeof(error) === "string") {
-    throw new Error(error);
+    handleUnauthenticated(req, res, new Error(`Could not sign you in: ${error}`));
+    return;
   }
   if (typeof(code) !== "string") {
-    throw new Error("Could not parse auth code");
+    handleUnauthenticated(req, res, new Error("Could not sign you in: authentication failed"));
+    return;
   }
   res.cookie("auth_code", code);
   res.redirect("/");
 });
 
-router.get("/results", (req: Request, res) => {
-  const getUnclassifiedPhotos = async () => {
-    const { auth_code } = req.cookies as Cookie;
+router.get("/results", (req, res) => {
+  const { auth_code } = req.cookies as Cookie;
 
-    if (!auth_code) {
-      req.session.error = "Could not view results while signed out. Sign in and try again.";
-      res.redirect("/login");
-      return;
-    }
+  if (!isAuthenticated(req)) {
+    handleUnauthenticated(req, res, new Error("Could not view results while signed out. Sign in and try again."));
+    return;
+  }
 
-    const unclassifiedPhotos = await photosService.findUnclassifiedPhotos(auth_code || "");
-    res.render("results", { photos: unclassifiedPhotos });
-  };
-
-  getUnclassifiedPhotos().catch((e) => {
-    logger.error(e);
-    res.clearCookie("auth_code");
-    res.render("home");
-  });
+  photosService.findUnclassifiedPhotos(auth_code || "")
+    .then((photos) => res.render("results", { photos }))
+    .catch((error: Error) => {
+      handleUnauthenticated(req, res, error);
+    });
 });
+
+function isAuthenticated(req: Request): boolean {
+  const { auth_code } = req.cookies as Cookie;
+  return !!auth_code;
+}
+
+function handleUnauthenticated(req: Request, res: Response, error: Error) {
+  logger.error(error.message);
+  req.session.error = error.message;
+  res.clearCookie("auth_code");
+  res.redirect("/sign-in");
+}
 
 function popError(req: Request) {
   const { error } = req.session;
