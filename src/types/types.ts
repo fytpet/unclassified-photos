@@ -1,3 +1,8 @@
+export interface ItemsResponse<T> {
+  items: T[];
+  nextPageToken: string;
+}
+
 export interface AlbumsResponse {
   albums: Album[];
   nextPageToken: string;

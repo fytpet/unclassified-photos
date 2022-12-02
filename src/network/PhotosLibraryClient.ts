@@ -1,4 +1,4 @@
-import { Album, AlbumsResponse, Photo, PhotosResponse, Session } from "../types/types";
+import { Album, AlbumsResponse, ItemsResponse, Photo, PhotosResponse, Session } from "../types/types";
 import { ApiClient } from "./apiClient";
 
 const ALBUM_PAGE_SIZE = 50;
@@ -6,69 +6,56 @@ const SEARCH_PAGE_SIZE = 100;
 
 export class PhotosLibraryClient {
   static async getPhotos(session: Session) {
-    let photos: Photo[] = [];
-  
-    const params = new URLSearchParams();
-    params.append("pageSize", SEARCH_PAGE_SIZE.toString());
-  
-    do {
-      const { data } = await ApiClient.get<PhotosResponse>(
+    return fetchAllPages<Photo>(SEARCH_PAGE_SIZE, async (params: URLSearchParams) => {
+      const response = await ApiClient.get<PhotosResponse>(
         `/v1/mediaItems?${params.toString()}`,
         { headers: { "Authorization" : `Bearer ${session.bearer}` } },
         session.id
       );
-  
-      photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
-
-      goToNextPage(params, data.nextPageToken);
-    } while (params.has("pageToken"));
-  
-    return photos;
+      return { items: response.data.mediaItems, nextPageToken: response.data.nextPageToken };
+    });
   }
 
-  static async getAlbums(session: Session) {
-    let albums: Album[] = [];
-  
-    const params = new URLSearchParams();
-    params.append("pageSize", ALBUM_PAGE_SIZE.toString());
-  
-    do {
-      const { data } = await ApiClient.get<AlbumsResponse>(
+  static async getAlbums(session: Session) {  
+    return fetchAllPages<Album>(ALBUM_PAGE_SIZE, async (params: URLSearchParams) => {
+      const response = await ApiClient.get<AlbumsResponse>(
         `/v1/albums?${params.toString()}`,
         { headers: { "Authorization" : `Bearer ${session.bearer}` } },
         session.id
       );
-  
-      albums = albums.concat(data.albums.filter((album: Album) => !!album));
-  
-      goToNextPage(params, data.nextPageToken);
-    } while (params.has("pageToken"));
-  
-    return albums;
+      return { items: response.data.albums, nextPageToken: response.data.nextPageToken };
+    });
   }
 
-  static async getPhotosOfAlbum(album: Album, session: Session) {
-    let photos: Photo[] = [];
-  
-    const params = new URLSearchParams();
-    params.append("pageSize", SEARCH_PAGE_SIZE.toString());
-    params.append("albumId", album.id);
-
-    do {
-      const { data } = await ApiClient.post<PhotosResponse>(
+  static async getPhotosOfAlbum(album: Album, session: Session) {  
+    return fetchAllPages<Photo>(SEARCH_PAGE_SIZE, async (params: URLSearchParams) => {
+      const response = await ApiClient.post<PhotosResponse>(
         `/v1/mediaItems:search?${params.toString()}`,
         undefined,
         { headers: { "Authorization" : `Bearer ${session.bearer}` } },
         session.id
       );
-        
-      photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
-    
-      goToNextPage(params, data.nextPageToken);
-    } while (params.has("pageToken"));
-
-    return photos;
+      return { items: response.data.mediaItems, nextPageToken: response.data.nextPageToken };
+    }, album.id);
   }
+}
+
+async function fetchAllPages<T>(pageSize: number, fetchPage: (p: URLSearchParams) => Promise<ItemsResponse<T>>, albumId?: string) {
+  let items: T[] = [];
+  const params = new URLSearchParams();
+  params.append("pageSize", pageSize.toString());
+
+  if (albumId) {
+    params.append("albumId", albumId);
+  }
+
+  do {
+    const data = await fetchPage(params);
+    items = items.concat(data.items.filter((item) => !!item));
+    goToNextPage(params, data.nextPageToken);
+  } while (params.has("pageToken"));
+
+  return items;
 }
 
 function goToNextPage(params: URLSearchParams, nextPageToken: string) {
