@@ -4,12 +4,8 @@ import { Logger } from "../utils/Logger";
 
 export class PhotosService {
   static async findUnclassifiedPhotos(sessionInfo: Session) {
-
-
-    const [photos, albums] = await Promise.all([
-      PhotosLibraryClient.getPhotos(sessionInfo),
-      PhotosLibraryClient.getAlbums(sessionInfo)
-    ]);
+    const albums = await PhotosLibraryClient.getAlbums(sessionInfo);
+    const photos = await PhotosLibraryClient.getPhotos(sessionInfo);
   
     const classifiedIds = new Set<string>();
 

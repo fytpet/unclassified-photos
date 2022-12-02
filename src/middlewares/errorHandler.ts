@@ -7,11 +7,9 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
   }
 
   Logger.error(err, req.sessionID);
+
   req.session.error = err.message;
-  req.session.destroy((err) => {
-    if (err) {
-      Logger.error(err, req.sessionID);
-    }
-  });
+  delete req.session.bearer;
+
   res.redirect("/sign-in");
 }

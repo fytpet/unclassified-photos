@@ -2,34 +2,41 @@ import winston from "winston";
 
 export class Logger {
   private static logger = winston.createLogger({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.simple()
-    ),
-    level: "verbose",
-    transports: [ new winston.transports.Console() ]
+    level: "info",
+    transports: [
+      new winston.transports.Console({
+        format: winston.format.combine(
+          winston.format.colorize(),
+          winston.format.simple()
+        ),
+      }),
+      new winston.transports.File({
+        filename: "info.log",
+        format: winston.format.simple()
+      })
+    ]
   });
 
-  static error(err: string | Error | unknown, id?: string) {
+  static error(err: string | Error | unknown, id: string) {
     if (typeof(err) === "string") {
-      this.logger.error(err, { id });
+      this.logger.error(this.toLogMessage(err, id));
+      return;
+    }
+  
+    if (err instanceof Error) {
+      this.logger.error(this.toLogMessage(err.message, id));
       return;
     }
 
-    const standardError = err as Error;
-    if (standardError.name === "Error") {
-      this.logger.error(standardError.message, { id });
-      return;
-    }
-
-    this.logger.error(JSON.stringify(err), { id });
+    this.logger.error(this.toLogMessage(JSON.stringify(err), id));
   }
 
-  static info(message: string, id?: string) {
-    this.logger.info(message, { id });
+  static info(message: string, id: string) {
+    this.logger.info(this.toLogMessage(message, id));
   }
 
-  static verbose(message: string, id?: string) {
-    this.logger.verbose(message, { id });
+  private static toLogMessage(message: string, id: string) {
+    return `[${new Date().toISOString()}] [${id}] ${message}`
+      .replace(/ {2}|\r\n|\n|\r/gm, " ");
   }
 }

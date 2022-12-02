@@ -1,6 +1,5 @@
 import { Album, AlbumsResponse, Photo, PhotosResponse, Session } from "../types/types";
-import { Logger } from "../utils/Logger";
-import { apiClient } from "./apiClient";
+import { ApiClient } from "./apiClient";
 
 const ALBUM_PAGE_SIZE = 50;
 const SEARCH_PAGE_SIZE = 100;
@@ -12,20 +11,18 @@ export class PhotosLibraryClient {
     const params = new URLSearchParams();
     params.append("pageSize", SEARCH_PAGE_SIZE.toString());
   
-    Logger.verbose("Loading photos", session.id);
     do {
-      const { data } = await apiClient.get<PhotosResponse>(
+      const { data } = await ApiClient.get<PhotosResponse>(
         `/v1/mediaItems?${params.toString()}`,
-        { headers: { "Authorization" : `Bearer ${session.bearer}` } }
+        { headers: { "Authorization" : `Bearer ${session.bearer}` } },
+        session.id
       );
   
       photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
-      Logger.verbose(`Received ${photos.length} photos`, session.id);
-  
+
       goToNextPage(params, data.nextPageToken);
     } while (params.has("pageToken"));
   
-    Logger.info("Photos loaded", session.id);
     return photos;
   }
 
@@ -35,20 +32,18 @@ export class PhotosLibraryClient {
     const params = new URLSearchParams();
     params.append("pageSize", ALBUM_PAGE_SIZE.toString());
   
-    Logger.verbose("Loading albums", session.id);
     do {
-      const { data } = await apiClient.get<AlbumsResponse>(
+      const { data } = await ApiClient.get<AlbumsResponse>(
         `/v1/albums?${params.toString()}`,
-        { headers: { "Authorization" : `Bearer ${session.bearer}` } }
+        { headers: { "Authorization" : `Bearer ${session.bearer}` } },
+        session.id
       );
   
       albums = albums.concat(data.albums.filter((album: Album) => !!album));
-      Logger.verbose(`Received ${albums.length} albums`, session.id);
   
       goToNextPage(params, data.nextPageToken);
     } while (params.has("pageToken"));
   
-    Logger.info("Albums loaded", session.id);
     return albums;
   }
 
@@ -59,21 +54,19 @@ export class PhotosLibraryClient {
     params.append("pageSize", SEARCH_PAGE_SIZE.toString());
     params.append("albumId", album.id);
 
-    Logger.verbose(`Loading photos for ${album.title}`, session.id);
     do {
-      const { data } = await apiClient.post<PhotosResponse>(
+      const { data } = await ApiClient.post<PhotosResponse>(
         `/v1/mediaItems:search?${params.toString()}`,
         undefined,
-        { headers: { "Authorization" : `Bearer ${session.bearer}` } }
+        { headers: { "Authorization" : `Bearer ${session.bearer}` } },
+        session.id
       );
         
       photos = photos.concat(data.mediaItems.filter((photo: Photo) => !!photo));
-      Logger.verbose(`Received ${photos.length} photos for ${album.title}`, session.id);
     
       goToNextPage(params, data.nextPageToken);
     } while (params.has("pageToken"));
 
-    Logger.info(`Photos for ${album.title} loaded`, session.id);
     return photos;
   }
 }
