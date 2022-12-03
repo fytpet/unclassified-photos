@@ -6,7 +6,7 @@ const ALBUM_PAGE_SIZE = 50;
 const SEARCH_PAGE_SIZE = 100;
 
 export class PhotosLibraryClient {
-  private apiClient: ApiClient;
+  private readonly apiClient: ApiClient;
 
   constructor(session: Session) {
     this.apiClient = new ApiClient(session);

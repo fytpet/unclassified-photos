@@ -1,5 +1,5 @@
 export class URL {
-  private url: string;
+  private readonly url: string;
   
   constructor(url?: string) {
     this.url = url ?? "";

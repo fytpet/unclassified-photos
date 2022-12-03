@@ -6,8 +6,8 @@ import { URL } from "../network/utils";
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 
 export class ApiClient {
-  private axios: AxiosInstance;
-  private session: Session;
+  private readonly axios: AxiosInstance;
+  private readonly session: Session;
 
   constructor(session: Session) {
     this.axios = axios.create({

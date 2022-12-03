@@ -3,8 +3,8 @@ import { PhotosLibraryClient } from "../network/PhotosLibraryClient";
 import { Session } from "../types/types";
 
 export class PhotosService {
-  private photosLibraryClient;
-  private session: Session;
+  private readonly photosLibraryClient;
+  private readonly session: Session;
 
   constructor(session: Session) {
     this.photosLibraryClient = new PhotosLibraryClient(session);

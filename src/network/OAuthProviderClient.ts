@@ -6,7 +6,7 @@ export const REDIRECT_URI = `${process.env.BASE_URI}/oauth/redirect`;
 const GRANT_TYPE = "authorization_code";
 
 export class OAuthProviderClient {
-  private apiClient: ApiClient;
+  private readonly apiClient: ApiClient;
 
   constructor(session: Session) {
     this.apiClient = new ApiClient(session);
