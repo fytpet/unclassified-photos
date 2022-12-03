@@ -1,10 +1,9 @@
 import express, { Request } from "express";
+import { Logger } from "../logging/Logger";
 import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/OAuthProviderClient";
 import { PhotosService } from "../services/PhotosService";
-import { Logger } from "../utils/Logger";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
-const RESPONSE_TYPE = "code";
 
 export const router = express.Router();
 
@@ -39,7 +38,7 @@ router.get("/oauth", (_, res) => {
   const params = new URLSearchParams();
   params.append("client_id", process.env.GOOGLE_CLIENT_ID);
   params.append("redirect_uri", REDIRECT_URI);
-  params.append("response_type", RESPONSE_TYPE);
+  params.append("response_type", "code");
   params.append("scope", PHOTOS_LIBRARY_READONLY_SCOPE);
   params.append("prompt", "select_account");
 

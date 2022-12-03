@@ -1,6 +1,6 @@
+import { Logger } from "../logging/Logger";
 import { PhotosLibraryClient } from "../network/PhotosLibraryClient";
 import { Session } from "../types/types";
-import { Logger } from "../utils/Logger";
 
 export class PhotosService {
   private photosLibraryClient;
@@ -12,16 +12,11 @@ export class PhotosService {
   }
 
   async findUnclassifiedPhotos() {
-    const albums = await this.photosLibraryClient.getAlbums();
-    const photos = await this.photosLibraryClient.getPhotos();
-  
-    const classifiedIds = new Set<string>();
+    const albums = await this.photosLibraryClient.fetchAlbums();
+    const photos = await this.photosLibraryClient.fetchPhotos();
+    const albumPhotos = await Promise.all(albums.map((album) => this.photosLibraryClient.fetchPhotosOfAlbum(album)));
 
-    const photosInAlbums = await Promise.all(
-      albums.map((album) => this.photosLibraryClient.getPhotosOfAlbum(album))
-    );
-
-    photosInAlbums.flat().forEach((albumPhoto) => classifiedIds.add(albumPhoto.id));
+    const classifiedIds = new Set<string>(albumPhotos.flat().map((albumPhoto) => albumPhoto.id));
   
     const unclassifiedPhotos = photos.filter((photo) => !classifiedIds.has(photo.id));
 

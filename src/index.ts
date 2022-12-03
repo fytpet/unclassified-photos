@@ -3,11 +3,11 @@ dotenv.config();
 
 import express from "express";
 import path from "path";
+import { Logger } from "./logging/Logger";
 import { errorHandler } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 import { session } from "./middlewares/session";
 import { router } from "./routes/routes";
-import { Logger } from "./utils/Logger";
 
 const app = express();
 
@@ -20,5 +20,5 @@ app.use("/", router);
 app.use(errorHandler);
 
 const port = process.env.PORT;
-Logger.info(`Server listening on ${port}`, "--------------------------------");
+Logger.info(`Server listening on ${port}`);
 app.listen(port);

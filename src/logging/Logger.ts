@@ -17,7 +17,7 @@ export class Logger {
     ]
   });
 
-  static error(err: string | Error | unknown, id: string) {
+  static error(err: string | Error | unknown, id?: string) {
     if (typeof(err) === "string") {
       this.logger.error(this.toLogMessage(err, id));
       return;
@@ -31,12 +31,14 @@ export class Logger {
     this.logger.error(this.toLogMessage(JSON.stringify(err), id));
   }
 
-  static info(message: string, id: string) {
+  static info(message: string, id?: string) {
     this.logger.info(this.toLogMessage(message, id));
   }
 
-  private static toLogMessage(message: string, id: string) {
-    return `[${new Date().toISOString()}] [${id}] ${message}`
-      .replace(/ {2}|\r\n|\n|\r/gm, " ");
+  private static toLogMessage(message: string, id?: string) {
+    const date = new Date().toISOString();
+    const idFallbacked = id ?? "--------------------------------";
+    const formatted = `[${date}] [${idFallbacked}] ${message}`;
+    return formatted.replace(/ {2}|\r\n|\n|\r/gm, " ");
   }
 }

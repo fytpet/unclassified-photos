@@ -29,6 +29,12 @@
       "error",
       "windows"
     ],
+    "max-len": [
+      "error", {
+        "code": 120,
+        "tabWidth": 2
+      }
+    ],
     "quotes": [
       "error",
       "double"
