@@ -18,49 +18,39 @@ export class ApiClient {
           "Authorization" : session.bearer && `Bearer ${session.bearer}`,
           "Content-Type": "application/json"
         }
-      }
+      },
+    });
+    this.axios.interceptors.response.use((res) => {
+      Logger.info(this.toLog(res.config.url, res.config.method, res.status), session.id);
+      return res;
+    }, (err: AxiosError) => {
+      throw this.parseError(err, err.config?.url);
     });
     this.session = session;
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig) {
-    try {
-      const result = await this.axios.get<T>(url, config);
-      this.logResponse(url, "GET", result.status);
-      return result;
-    } catch (err) {
-      throw this.parseError(err, url);
-    }
+    return this.axios.get<T>(url, config);
   }
 
   async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
-    try {
-      const result = await this.axios.post<T>(url, data, config);
-      this.logResponse(url, "POST", result.status);
-      return result;
-    } catch (err) {
-      throw this.parseError(err, url);
-    }
+    return this.axios.post<T>(url, data, config);
   }
 
-  private parseError(err: unknown, url: string) {
+  private parseError(err: unknown, url: string | undefined) {
     const { config, response } = err as AxiosError;
     const data = response?.data;
 
-    this.logErrorResponse(url, config?.method, response?.status);
+    Logger.error(this.toLog(url, config?.method, response?.status), this.session.id);
     Logger.error(data, this.session.id);
     
     if ((data as AccessTokenError).error === "invalid_grant") {
-      return new Error("You have been signed out due to inactivity. Try signing in again.");
+      return new Error("Your session has expired. Try signing in again.");
     }
     return new Error("An unknown error occurred. Try again later.");
   }
-
-  private logResponse(url: string, method: string, status: number) {
-    Logger.info(`[OUT] ${method} ${removeQueryStringFromUrl(url)} ${status}`, this.session.id);
-  }
-
-  private logErrorResponse(url: string, method: string | undefined, status: number | undefined) {
-    Logger.error(`[OUT] ${method?.toUpperCase() ?? FALLBACK_VALUE} ${removeQueryStringFromUrl(url)} ${status ?? FALLBACK_VALUE}`, this.session.id);
+  
+  private toLog(url: string | undefined, method: string | undefined, status: number | undefined) {
+    return `[OUT] ${method?.toUpperCase() ?? FALLBACK_VALUE} ${removeQueryStringFromUrl(url ?? FALLBACK_VALUE)} ${status ?? FALLBACK_VALUE}`;
   }
 }
