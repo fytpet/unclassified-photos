@@ -48,5 +48,5 @@ export interface AccessTokenError {
 
 export interface Session {
   id: string;
-  bearer: string;
+  bearer?: string;
 }

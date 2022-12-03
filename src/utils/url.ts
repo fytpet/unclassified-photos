@@ -1,3 +1,3 @@
-export function withoutQuery(url: string) {
+export function removeQueryStringFromUrl(url: string) {
   return url.split("?")[0] ?? url;
 }

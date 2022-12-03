@@ -1,47 +1,54 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { AccessTokenError } from "../types/types";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { AccessTokenError, Session } from "../types/types";
 import { Logger } from "../utils/Logger";
-import { withoutQuery } from "../utils/url";
+import { removeQueryStringFromUrl } from "../utils/url";
 
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 const FALLBACK_VALUE = "UNKNOWN";
 
 export class ApiClient {
-  private static apiClient = axios.create({
-    baseURL: PHOTOS_LIBRARY_BASE_URL,
-    headers: {
-      common: {
-        "Content-Type": "application/json"
+  private axios: AxiosInstance;
+  private session: Session;
+
+  constructor(session: Session) {
+    this.axios = axios.create({
+      baseURL: PHOTOS_LIBRARY_BASE_URL,
+      headers: {
+        common: {
+          "Authorization" : session.bearer && `Bearer ${session.bearer}`,
+          "Content-Type": "application/json"
+        }
       }
-    }
-  });
+    });
+    this.session = session;
+  }
 
-  static async get<T>(url: string, config: AxiosRequestConfig, sessionId: string) {
+  async get<T>(url: string, config?: AxiosRequestConfig) {
     try {
-      const result = await this.apiClient.get<T>(url, config);
-      this.logResponse(url, sessionId, "GET", result.status);
+      const result = await this.axios.get<T>(url, config);
+      this.logResponse(url, "GET", result.status);
       return result;
     } catch (err) {
-      throw this.parseError(err, url, sessionId);
+      throw this.parseError(err, url);
     }
   }
 
-  static async post<T>(url: string, data: unknown, config: AxiosRequestConfig, sessionId: string) {
+  async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
     try {
-      const result = await this.apiClient.post<T>(url, data, config);
-      this.logResponse(url, sessionId, "POST", result.status);
+      const result = await this.axios.post<T>(url, data, config);
+      this.logResponse(url, "POST", result.status);
       return result;
     } catch (err) {
-      throw this.parseError(err, url, sessionId);
+      throw this.parseError(err, url);
     }
   }
 
-  private static parseError(err: unknown, url: string, sessionId: string) {
+  private parseError(err: unknown, url: string) {
     const { config, response } = err as AxiosError;
     const data = response?.data;
 
-    this.logErrorResponse(url, sessionId, config?.method, response?.status);
-    Logger.error(data, sessionId);
+    this.logErrorResponse(url, config?.method, response?.status);
+    Logger.error(data, this.session.id);
     
     if ((data as AccessTokenError).error === "invalid_grant") {
       return new Error("You have been signed out due to inactivity. Try signing in again.");
@@ -49,11 +56,11 @@ export class ApiClient {
     return new Error("An unknown error occurred. Try again later.");
   }
 
-  private static logResponse(url: string, sessionId: string, method: string, status: number) {
-    Logger.info(`[OUT] ${method} ${withoutQuery(url)} ${status}`, sessionId);
+  private logResponse(url: string, method: string, status: number) {
+    Logger.info(`[OUT] ${method} ${removeQueryStringFromUrl(url)} ${status}`, this.session.id);
   }
 
-  private static logErrorResponse(url: string, sessionId: string, method: string | undefined, status: number | undefined) {
-    Logger.error(`[OUT] ${method?.toUpperCase() ?? FALLBACK_VALUE} ${withoutQuery(url)} ${status ?? FALLBACK_VALUE}`, sessionId);
+  private logErrorResponse(url: string, method: string | undefined, status: number | undefined) {
+    Logger.error(`[OUT] ${method?.toUpperCase() ?? FALLBACK_VALUE} ${removeQueryStringFromUrl(url)} ${status ?? FALLBACK_VALUE}`, this.session.id);
   }
 }

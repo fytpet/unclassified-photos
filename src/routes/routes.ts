@@ -55,7 +55,8 @@ router.get("/oauth/redirect", (req, res, next) => {
     throw new Error("Could not sign you in: authentication failed");
   }
 
-  OAuthProviderClient.createAccessToken(req.sessionID, code)
+  const oauthProviderClient = new OAuthProviderClient({ id: req.sessionID });
+  oauthProviderClient.createAccessToken(code)
     .then((accessToken) => {
       req.session.bearer = accessToken;
       res.redirect("/");
@@ -70,7 +71,8 @@ router.post("/", (req, res, next) => {
     throw new Error("Could not view results while signed out. Sign in and try again.");
   }
 
-  PhotosService.findUnclassifiedPhotos({ id: req.sessionID, bearer })
+  const photosService = new PhotosService({ id: req.sessionID, bearer });
+  photosService.findUnclassifiedPhotos()
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });
