@@ -1,9 +1,7 @@
-const PORT = "8080";
-const BASE_URI = `http://localhost:${PORT}`;
-const SESSION_SECRET = "somesessionsecret";
-
 export default function() {
-  process.env.PORT = PORT;
-  process.env.BASE_URI = BASE_URI;
-  process.env.SESSION_SECRET = SESSION_SECRET;
+  process.env.GOOGLE_CLIENT_ID = "somegoogleclientid";
+  process.env.GOOGLE_CLIENT_SECRET = "somegoogleclientsecret";
+  process.env.PORT = "8080";
+  process.env.BASE_URI = "http://localhost:8080";
+  process.env.SESSION_SECRET = "somesessionsecret";
 }
