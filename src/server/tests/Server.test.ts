@@ -1,35 +1,60 @@
 jest.mock("../../logging/Logger.ts");
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { RequestHandler } from "express";
 import { UnclassifiedPhotosServer } from "../Server";
 
 const BASE_URI = process.env.BASE_URI;
 const SOME_SESSION_BEARER = "somesessionbearer";
 const SOME_ERROR_MESSAGE = "Something went wrong! Try again.";
-const SIGN_IN_PAGE_TEXT = "You first need to sign in with Google";
-const HOME_PAGE_TEXT = "<span>Search</span>";
 
 let server: UnclassifiedPhotosServer | undefined;
+let response: AxiosResponse;
 
-function givenUnauthenticated(errorMessage?: string) {
-  givenServer((req, _, next) => {
-    if (errorMessage) {
-      req.session.error = errorMessage;
-    }
-    next();
+function givenUnauthenticated() {
+  beforeEach(() => {
+    givenServer((req, _, next) => {
+      req.session.error = SOME_ERROR_MESSAGE;
+      next();
+    });
   });
 }
 
 function givenAuthenticated() {
-  givenServer((req, _, next) => {
-    req.session.bearer = SOME_SESSION_BEARER;
-    next();
+  beforeEach(() => {
+    givenServer((req, _, next) => {
+      req.session.bearer = SOME_SESSION_BEARER;
+      next();
+    });
   });
 }
 
 function givenServer(middleware?: RequestHandler) {
   server = new UnclassifiedPhotosServer(middleware);
   server.start();
+}
+
+function whenNavigatingToSignIn() {
+  beforeEach(async () => {
+    response = await axios.get(`${BASE_URI}/sign-in`);
+  });
+}
+
+function whenNavigatingToHome() {
+  beforeEach(async () => {
+    response = await axios.get(BASE_URI);
+  });
+}
+
+function thenSignInPageIsRendered() {
+  expect(response.data).toContain("You first need to sign in with Google");
+}
+
+function thenHomePageIsRendered() {
+  expect(response.data).toContain("<span>Search</span>");
+}
+
+function thenErrorMessageIsRendered() {
+  expect(response.data).toContain(SOME_ERROR_MESSAGE);
 }
 
 afterEach(() => {
@@ -39,56 +64,50 @@ afterEach(() => {
 });
 
 describe("given unauthenticated", () => {
+  givenUnauthenticated();
+
   describe("when navigating to sign-in", () => {
-    test("then sign-in page is rendered", async () => {
-      givenUnauthenticated();
+    whenNavigatingToSignIn();
 
-      const response = await axios.get(`${BASE_URI}/sign-in`);
-
-      expect(response.data).toContain(SIGN_IN_PAGE_TEXT);
+    test("then sign-in page is rendered", () => {
+      thenSignInPageIsRendered();
     });
   });
 
   describe("when navigating to home", () => {
-    test("then sign-in page is rendered", async () => {
-      givenUnauthenticated();
-
-      const response = await axios.get(BASE_URI);
-
-      expect(response.data).toContain(SIGN_IN_PAGE_TEXT);
+    whenNavigatingToHome();
+  
+    test("then sign-in page is rendered", () => {
+      thenSignInPageIsRendered();
     });
 
-    test("then error message is rendered", async () => {
-      givenUnauthenticated(SOME_ERROR_MESSAGE);
-
-      const response = await axios.get(BASE_URI);
-
-      expect(response.data).toContain(SOME_ERROR_MESSAGE);
+    test("then error message is rendered", () => {
+      thenErrorMessageIsRendered();
     });
   });
 });
 
 describe("given authenticated", () => {
+  givenAuthenticated();
+
   describe("when navigating to sign-in", () => {
-    test("then home page is rendered", async () => {
-      givenAuthenticated();
+    whenNavigatingToSignIn();
 
-      const response = await axios.get(BASE_URI);
-
-      expect(response.data).toContain(HOME_PAGE_TEXT);
+    test("then home page is rendered", () => {
+      thenHomePageIsRendered();
     });
   });
 
   describe("when navigating to home", () => {
-    test("then home page is rendered", async () => {
-      givenAuthenticated();
+    whenNavigatingToHome();
 
-      const response = await axios.get(BASE_URI);
-
-      expect(response.data).toContain(HOME_PAGE_TEXT);
+    test("then home page is rendered", () => {
+      thenHomePageIsRendered();
     });
   });
+});
 
+describe("given server", () => {
   describe("when navigating to sign-out", () => {
     test("then session is destroyed", async () => {
       const destroy = jest.fn();
@@ -105,9 +124,9 @@ describe("given authenticated", () => {
     test("then sign-in page is rendered", async () => {
       givenServer();
 
-      const response = await axios.get(`${BASE_URI}/sign-out`);
+      response = await axios.get(`${BASE_URI}/sign-out`);
 
-      expect(response.data).toContain(SIGN_IN_PAGE_TEXT);
+      thenSignInPageIsRendered();
     });
   });
 
@@ -142,9 +161,9 @@ describe("given authenticated", () => {
     test("then sign-in page is rendered", async () => {
       givenServer();
 
-      const response = await axios.get(`${BASE_URI}/unknown`);
+      response = await axios.get(`${BASE_URI}/unknown`);
 
-      expect(response.data).toContain(SIGN_IN_PAGE_TEXT);
+      thenSignInPageIsRendered();
     });
   });
 });
