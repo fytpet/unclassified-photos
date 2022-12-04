@@ -3,45 +3,44 @@ import axios, { AxiosResponse } from "axios";
 import { RequestHandler } from "express";
 import { UnclassifiedPhotosServer } from "../Server";
 
-const BASE_URI = process.env.BASE_URI;
-const SOME_SESSION_BEARER = "somesessionbearer";
+const HOME_ROUTE = process.env.BASE_URI;
+const SIGN_IN_ROUTE = `${HOME_ROUTE}/sign-in`;
+const SIGN_OUT_ROUTE = `${HOME_ROUTE}/sign-out`;
+const OAUTH_ROUTE = `${HOME_ROUTE}/oauth`;
+const UNKNOWN_ROUTE = `${HOME_ROUTE}/unknown`;
+
 const SOME_ERROR_MESSAGE = "Something went wrong! Try again.";
 
-let server: UnclassifiedPhotosServer | undefined;
+let server: UnclassifiedPhotosServer;
 let response: AxiosResponse;
+const destroySession = jest.fn();
+let redirect: jest.SpyInstance;
 
 function givenUnauthenticated() {
-  beforeEach(() => {
-    givenServer((req, _, next) => {
-      req.session.error = SOME_ERROR_MESSAGE;
-      next();
-    });
+  startServer((req, _, next) => {
+    req.session.error = SOME_ERROR_MESSAGE;
+    next();
   });
 }
 
 function givenAuthenticated() {
-  beforeEach(() => {
-    givenServer((req, _, next) => {
-      req.session.bearer = SOME_SESSION_BEARER;
-      next();
-    });
+  startServer((req, _, next) => {
+    req.session.bearer = "somesessionbearer";
+    next();
   });
 }
 
-function givenServer(middleware?: RequestHandler) {
-  server = new UnclassifiedPhotosServer(middleware);
-  server.start();
-}
-
-function whenNavigatingToSignIn() {
-  beforeEach(async () => {
-    response = await axios.get(`${BASE_URI}/sign-in`);
+function givenServer() {
+  startServer((req, res, next) => {
+    req.destroy = destroySession;
+    redirect = jest.spyOn(res, "redirect");
+    next();
   });
 }
 
-function whenNavigatingToHome() {
+function whenNavigatingTo(route: string) {
   beforeEach(async () => {
-    response = await axios.get(BASE_URI);
+    response = await axios.get(route);
   });
 }
 
@@ -57,25 +56,19 @@ function thenErrorMessageIsRendered() {
   expect(response.data).toContain(SOME_ERROR_MESSAGE);
 }
 
-afterEach(() => {
-  if (server) {
-    server.close();
-  }
-});
-
 describe("given unauthenticated", () => {
   givenUnauthenticated();
 
-  describe("when navigating to sign-in", () => {
-    whenNavigatingToSignIn();
+  describe("when navigating to sign-in route", () => {
+    whenNavigatingTo(SIGN_IN_ROUTE);
 
     test("then sign-in page is rendered", () => {
       thenSignInPageIsRendered();
     });
   });
 
-  describe("when navigating to home", () => {
-    whenNavigatingToHome();
+  describe("when navigating to home route", () => {
+    whenNavigatingTo(HOME_ROUTE);
   
     test("then sign-in page is rendered", () => {
       thenSignInPageIsRendered();
@@ -90,16 +83,16 @@ describe("given unauthenticated", () => {
 describe("given authenticated", () => {
   givenAuthenticated();
 
-  describe("when navigating to sign-in", () => {
-    whenNavigatingToSignIn();
+  describe("when navigating to sign-in route", () => {
+    whenNavigatingTo(SIGN_IN_ROUTE);
 
     test("then home page is rendered", () => {
       thenHomePageIsRendered();
     });
   });
 
-  describe("when navigating to home", () => {
-    whenNavigatingToHome();
+  describe("when navigating to home route", () => {
+    whenNavigatingTo(HOME_ROUTE);
 
     test("then home page is rendered", () => {
       thenHomePageIsRendered();
@@ -108,62 +101,54 @@ describe("given authenticated", () => {
 });
 
 describe("given server", () => {
-  describe("when navigating to sign-out", () => {
-    test("then session is destroyed", async () => {
-      const destroy = jest.fn();
-      givenServer((req, _, next) => {
-        req.session.destroy = destroy;
-        next();
-      });
+  givenServer();
 
-      await axios.get(`${BASE_URI}/sign-out`);
+  describe("when navigating to sign-out route", () => {
+    whenNavigatingTo(SIGN_OUT_ROUTE);
 
-      expect(destroy).toHaveBeenCalled();
+    test("then session is destroyed", () => {
+      expect(destroySession).toHaveBeenCalled();
     });
 
-    test("then sign-in page is rendered", async () => {
-      givenServer();
-
-      response = await axios.get(`${BASE_URI}/sign-out`);
-
+    test("then sign-in page is rendered", () => {
       thenSignInPageIsRendered();
     });
   });
 
-  describe("when navigating to oauth", () => {
-    test("then user is redirected to oauth provider", async () => {
-      let redirect;
-      givenServer((_, res, next) => {
-        redirect = jest.fn(() => {
-          res.sendStatus(200);
-        });
-        res.redirect = redirect;
-        next();
-      });
-
-      await axios.get(`${BASE_URI}/oauth`);
-
-      expect(redirect).toHaveBeenCalledWith(expectedUri());
+  describe("when navigating to oauth route", () => {
+    whenNavigatingTo(OAUTH_ROUTE);
+  
+    test("then user is redirected to oauth provider", () => {
+      expect(redirect).toHaveBeenCalledWith(expectedOAuthProviderUrl());
     });
-
-    function expectedUri() {
-      const params = new URLSearchParams();
-      params.append("client_id", "somegoogleclientid");
-      params.append("redirect_uri", "http://localhost:8080/oauth/redirect");
-      params.append("response_type", "code");
-      params.append("scope", "https://www.googleapis.com/auth/photoslibrary.readonly");
-      params.append("prompt", "select_account");
-      return `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
-    }
   });
 
   describe("when navigating to unknown route", () => {
-    test("then sign-in page is rendered", async () => {
-      givenServer();
-
-      response = await axios.get(`${BASE_URI}/unknown`);
-
+    whenNavigatingTo(UNKNOWN_ROUTE);
+    
+    test("then sign-in page is rendered", () => {
       thenSignInPageIsRendered();
     });
   });
 });
+
+afterEach(() => {
+  server.close();
+});
+
+function startServer(handler: RequestHandler) {
+  beforeEach(() => {
+    server = new UnclassifiedPhotosServer(handler);
+    server.start();
+  });
+}
+
+function expectedOAuthProviderUrl() {
+  const params = new URLSearchParams();
+  params.append("client_id", "somegoogleclientid");
+  params.append("redirect_uri", "http://localhost:8080/oauth/redirect");
+  params.append("response_type", "code");
+  params.append("scope", "https://www.googleapis.com/auth/photoslibrary.readonly");
+  params.append("prompt", "select_account");
+  return `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
+}

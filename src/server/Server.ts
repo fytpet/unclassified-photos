@@ -12,15 +12,13 @@ export class UnclassifiedPhotosServer {
   private app = express();
   private server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
 
-  constructor(middleware?: RequestHandler) {
+  constructor(middleware: RequestHandler = (_, __, next) => next()) {
     this.app.set("views", path.join(__dirname, "../views"));
     this.app.set("view engine", "ejs");
     this.app.use(session);
     this.app.use(express.static("./public"));
     this.app.use(requestLogger);
-    if (middleware) {
-      this.app.use(middleware);
-    }
+    this.app.use(middleware);
     this.app.use("/", router);
     this.app.use(errorHandler);
   }
