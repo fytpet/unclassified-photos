@@ -137,4 +137,14 @@ describe("given authenticated", () => {
       return `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
     }
   });
+
+  describe("when navigating to unknown route", () => {
+    test("then sign-in page is rendered", async () => {
+      givenServer();
+
+      const response = await axios.get(`${BASE_URI}/unknown`);
+
+      expect(response.data).toContain(SIGN_IN_PAGE_TEXT);
+    });
+  });
 });
