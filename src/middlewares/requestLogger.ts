@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Logger } from "../logging/Logger";
-import { URL } from "../network/utils";
+import { URL } from "../network/URL";
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   res.on("finish", () => {
