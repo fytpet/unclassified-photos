@@ -30,8 +30,10 @@ function givenUnauthenticated() {
 function givenAuthenticated() {
   startServer((req, _, next) => {
     req.session.bearer = "somesessionbearer";
-    next();
-  });
+    req.session.save(() => {
+      next();
+    });
+  }, HOME_ROUTE);
 }
 
 function givenServer() {
@@ -144,12 +146,12 @@ afterEach(() => {
   server.close();
 });
 
-function startServer(handler: RequestHandler) {
+function startServer(handler: RequestHandler, startingRoute = SIGN_IN_ROUTE) {
   beforeEach(async () => {
     server = new UnclassifiedPhotosServer(handler);
     server.start();
 
-    const response = await axios.get(SIGN_IN_ROUTE);
+    const response = await axios.get(startingRoute);
     axios.defaults.headers["Cookie"] = response.headers["set-cookie"] ?? "";
   });
 
