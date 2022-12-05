@@ -1,6 +1,8 @@
 import express, { RequestHandler } from "express";
 import { IncomingMessage, Server, ServerResponse } from "http";
+import { createServer } from "https";
 import path from "path";
+import fs from "fs";
 import { Logger } from "../logging/Logger";
 import { errorHandler } from "../middlewares/errorHandler";
 import { requestLogger } from "../middlewares/requestLogger";
@@ -24,7 +26,14 @@ export class UnclassifiedPhotosServer {
   }
 
   start() {
-    this.server = this.app.listen(this.port);
+    if (process.env.HTTPS === "yes") {
+      this.server = createServer({
+        key: fs.readFileSync("./ssl/privkey.pem"),
+        cert: fs.readFileSync("./ssl/fullchain.pem"),
+      }, this.app).listen(this.port);
+    } else {
+      this.server = this.app.listen(this.port);
+    }
     Logger.info(`Server listening on ${this.port}`);
   }
 

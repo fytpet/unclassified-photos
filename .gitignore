@@ -1,5 +1,6 @@
 .vscode/
 build/
 node_modules/
+ssl/
 .env
 *.log
