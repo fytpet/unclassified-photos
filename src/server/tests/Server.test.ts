@@ -1,15 +1,19 @@
-jest.mock("../../logging/Logger.ts");
+// jest.mock("../../logging/Logger.ts");
 import axios, { AxiosResponse } from "axios";
 import { RequestHandler } from "express";
 import { UnclassifiedPhotosServer } from "../Server";
+
+const SIGN_IN_PAGE = "You first need to sign in with Google";
+const HOME_PAGE = "<span>Search</span>";
+const ERROR_MESSAGE = "Something went wrong! Try again.";
+const REDIRECT_ERROR = "redirection_failed";
 
 const HOME_ROUTE = process.env.BASE_URI;
 const SIGN_IN_ROUTE = `${HOME_ROUTE}/sign-in`;
 const SIGN_OUT_ROUTE = `${HOME_ROUTE}/sign-out`;
 const OAUTH_ROUTE = `${HOME_ROUTE}/oauth`;
+const REDIRECT_ROUTE_WITH_ERROR = `${HOME_ROUTE}/oauth/redirect?error=${REDIRECT_ERROR}`;
 const UNKNOWN_ROUTE = `${HOME_ROUTE}/unknown`;
-
-const SOME_ERROR_MESSAGE = "Something went wrong! Try again.";
 
 let server: UnclassifiedPhotosServer;
 let response: AxiosResponse;
@@ -18,7 +22,7 @@ let redirect: jest.SpyInstance;
 
 function givenUnauthenticated() {
   startServer((req, _, next) => {
-    req.session.error = SOME_ERROR_MESSAGE;
+    req.session.error = ERROR_MESSAGE;
     next();
   });
 }
@@ -32,7 +36,7 @@ function givenAuthenticated() {
 
 function givenServer() {
   startServer((req, res, next) => {
-    req.destroy = destroySession;
+    req.session.destroy = destroySession;
     redirect = jest.spyOn(res, "redirect");
     next();
   });
@@ -44,16 +48,8 @@ function whenNavigatingTo(route: string) {
   });
 }
 
-function thenSignInPageIsRendered() {
-  expect(response.data).toContain("You first need to sign in with Google");
-}
-
-function thenHomePageIsRendered() {
-  expect(response.data).toContain("<span>Search</span>");
-}
-
-function thenErrorMessageIsRendered() {
-  expect(response.data).toContain(SOME_ERROR_MESSAGE);
+function thenRenders(error: string) {
+  expect(response.data).toContain(error);
 }
 
 describe("given unauthenticated", () => {
@@ -62,20 +58,20 @@ describe("given unauthenticated", () => {
   describe("when navigating to sign-in route", () => {
     whenNavigatingTo(SIGN_IN_ROUTE);
 
-    test("then sign-in page is rendered", () => {
-      thenSignInPageIsRendered();
+    test("then renders sign-in page", () => {
+      thenRenders(SIGN_IN_PAGE);
     });
   });
 
   describe("when navigating to home route", () => {
     whenNavigatingTo(HOME_ROUTE);
   
-    test("then sign-in page is rendered", () => {
-      thenSignInPageIsRendered();
+    test("then renders sign-in page", () => {
+      thenRenders(SIGN_IN_PAGE);
     });
 
-    test("then error message is rendered", () => {
-      thenErrorMessageIsRendered();
+    test("then renders error message", () => {
+      thenRenders(ERROR_MESSAGE);
     });
   });
 });
@@ -86,16 +82,16 @@ describe("given authenticated", () => {
   describe("when navigating to sign-in route", () => {
     whenNavigatingTo(SIGN_IN_ROUTE);
 
-    test("then home page is rendered", () => {
-      thenHomePageIsRendered();
+    test("then renders home page", () => {
+      thenRenders(HOME_PAGE);
     });
   });
 
   describe("when navigating to home route", () => {
     whenNavigatingTo(HOME_ROUTE);
 
-    test("then home page is rendered", () => {
-      thenHomePageIsRendered();
+    test("then renders home page", () => {
+      thenRenders(HOME_PAGE);
     });
   });
 });
@@ -110,8 +106,8 @@ describe("given server", () => {
       expect(destroySession).toHaveBeenCalled();
     });
 
-    test("then sign-in page is rendered", () => {
-      thenSignInPageIsRendered();
+    test("then renders sign-in page", () => {
+      thenRenders(SIGN_IN_PAGE);
     });
   });
 
@@ -123,11 +119,23 @@ describe("given server", () => {
     });
   });
 
+  describe("when navigating to redirect route with error", () => {
+    whenNavigatingTo(REDIRECT_ROUTE_WITH_ERROR);
+
+    test("then renders sign-in page", () => {
+      thenRenders(SIGN_IN_PAGE);
+    });
+
+    test("then renders redirect error", () => {
+      thenRenders(REDIRECT_ERROR);
+    });
+  });
+
   describe("when navigating to unknown route", () => {
     whenNavigatingTo(UNKNOWN_ROUTE);
     
-    test("then sign-in page is rendered", () => {
-      thenSignInPageIsRendered();
+    test("then renders sign-in page", () => {
+      thenRenders(SIGN_IN_PAGE);
     });
   });
 });
@@ -137,9 +145,16 @@ afterEach(() => {
 });
 
 function startServer(handler: RequestHandler) {
-  beforeEach(() => {
+  beforeEach(async () => {
     server = new UnclassifiedPhotosServer(handler);
     server.start();
+
+    const response = await axios.get(SIGN_IN_ROUTE);
+    axios.defaults.headers["Cookie"] = response.headers["set-cookie"] ?? "";
+  });
+
+  afterEach(() => {
+    delete axios.defaults.headers["Cookie"];
   });
 }
 
