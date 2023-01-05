@@ -1,4 +1,5 @@
 import express, { RequestHandler } from "express";
+import helmet from "helmet";
 import { IncomingMessage, Server, ServerResponse } from "http";
 import { createServer } from "https";
 import path from "path";
@@ -17,6 +18,11 @@ export class UnclassifiedPhotosServer {
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
     this.app.set("views", path.join(__dirname, "../views"));
     this.app.set("view engine", "ejs");
+    this.app.use(
+      helmet({
+        referrerPolicy: { policy: "strict-origin" },
+      })
+    );
     this.app.use(session);
     this.app.use(express.static("./public"));
     this.app.use(requestLogger);
