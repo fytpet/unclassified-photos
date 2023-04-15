@@ -1,11 +1,11 @@
 export interface ItemsResponse<T> {
   items: T[];
-  nextPageToken: string;
+  nextPageToken: string | undefined;
 }
 
 export interface AlbumsResponse {
-  albums: Album[];
-  nextPageToken: string;
+  albums?: Album[];
+  nextPageToken?: string;
 }
 
 export interface Album {
@@ -18,8 +18,8 @@ export interface Album {
 }
 
 export interface PhotosResponse {
-  mediaItems: Photo[];
-  nextPageToken: string;
+  mediaItems?: Photo[];
+  nextPageToken?: string;
 }
 
 export interface Photo {

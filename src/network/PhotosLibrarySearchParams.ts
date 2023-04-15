@@ -1,3 +1,5 @@
+const PAGE_TOKEN_PARAM = "pageToken";
+
 export class PhotosLibrarySearchParams extends URLSearchParams {
   constructor(pageSize: number, albumId?: string) {
     super();
@@ -9,11 +11,15 @@ export class PhotosLibrarySearchParams extends URLSearchParams {
     }
   }
 
-  goToNextPage(nextPageToken: string) {
+  goToNextPage(nextPageToken: string | undefined) {
     if (nextPageToken) {
-      this.set("pageToken", nextPageToken);
+      this.set(PAGE_TOKEN_PARAM, nextPageToken);
     } else {
-      this.delete("pageToken");
+      this.delete(PAGE_TOKEN_PARAM);
     }
+  }
+
+  hasNextPage() {
+    return this.has(PAGE_TOKEN_PARAM);
   }
 }

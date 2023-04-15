@@ -17,7 +17,7 @@ export class PhotosLibraryClient {
       new PhotosLibrarySearchParams(SEARCH_PAGE_SIZE),
       async (params: URLSearchParams) => {
         const response = await this.apiClient.get<PhotosResponse>(`/v1/mediaItems?${params.toString()}`);
-        return { items: response.data.mediaItems, nextPageToken: response.data.nextPageToken };
+        return { items: response.data.mediaItems ?? [], nextPageToken: response.data.nextPageToken };
       }
     );
   }
@@ -27,7 +27,7 @@ export class PhotosLibraryClient {
       new PhotosLibrarySearchParams(ALBUM_PAGE_SIZE),
       async (params: URLSearchParams) => {
         const response = await this.apiClient.get<AlbumsResponse>(`/v1/albums?${params.toString()}`);
-        return { items: response.data.albums, nextPageToken: response.data.nextPageToken };
+        return { items: response.data.albums ?? [], nextPageToken: response.data.nextPageToken };
       }
     );
   }
@@ -37,7 +37,7 @@ export class PhotosLibraryClient {
       new PhotosLibrarySearchParams(SEARCH_PAGE_SIZE, album.id),
       async (params: URLSearchParams) => {
         const response = await this.apiClient.post<PhotosResponse>(`/v1/mediaItems:search?${params.toString()}`);
-        return { items: response.data.mediaItems, nextPageToken: response.data.nextPageToken };
+        return { items: response.data.mediaItems ?? [], nextPageToken: response.data.nextPageToken };
       }
     );
   }
@@ -52,7 +52,7 @@ export class PhotosLibraryClient {
       const data = await fetchPage(params);
       items = items.concat(data.items.filter((item) => !!item));
       params.goToNextPage(data.nextPageToken);
-    } while (params.has("pageToken"));
+    } while (params.hasNextPage());
   
     return items;
   }
