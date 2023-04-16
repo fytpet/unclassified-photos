@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { Logger } from "../../logging/Logger";
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {

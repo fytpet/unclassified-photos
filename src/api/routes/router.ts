@@ -1,4 +1,5 @@
-import express, { Request } from "express";
+import type { Request } from "express";
+import express from "express";
 import { Logger } from "../../logging/Logger";
 import { PhotosService } from "../../services/PhotosService";
 

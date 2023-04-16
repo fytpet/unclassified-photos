@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { UnclassifiedPhotosServer } from "./api/UnclassifiedPhotosServer";
+import { Server } from "./api/Server";
 
-new UnclassifiedPhotosServer().start();
+new Server().start();

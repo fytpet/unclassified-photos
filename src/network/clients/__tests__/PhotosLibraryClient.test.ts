@@ -1,5 +1,5 @@
 jest.mock("../ApiClient");
-import { Album } from "../../../types/types";
+import type { Album } from "../../../types/types";
 import { PhotosLibraryClient } from "../PhotosLibraryClient";
 
 const SOME_SESSION_ID = "28932";

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node ./src/app.ts",
     "test": "jest",
-    "validate": "eslint ./src"
+    "validate": "eslint ./src",
+    "auto-fix": "eslint --fix ./src"
   },
   "author": "Petros Fytilis",
   "license": "ISC",

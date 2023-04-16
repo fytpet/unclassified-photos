@@ -1,5 +1,5 @@
 import express from "express";
-import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
+import { OAUTH_PROVIDER_BASE_URL, OAuthProviderClient, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 
 export const oauthRouter = express.Router();

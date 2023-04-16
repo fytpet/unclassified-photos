@@ -1,4 +1,4 @@
-import { Album, AlbumsResponse, Photo, PhotosResponse, Session } from "../../types/types";
+import type { Album, AlbumsResponse, Photo, PhotosResponse, Session } from "../../types/types";
 import { PhotosLibraryCursor } from "../cursors/PhotosLibraryCursor";
 import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams";
 import { ApiClient } from "./ApiClient";

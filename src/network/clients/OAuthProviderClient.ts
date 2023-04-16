@@ -1,4 +1,4 @@
-import { AccessTokenResponse, Session } from "../../types/types";
+import type { AccessTokenResponse, Session } from "../../types/types";
 import { ApiClient } from "./ApiClient";
 
 export const OAUTH_PROVIDER_BASE_URL = "https://accounts.google.com/o/oauth2";

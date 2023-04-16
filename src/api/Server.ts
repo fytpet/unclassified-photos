@@ -1,6 +1,7 @@
-import express, { RequestHandler } from "express";
+import type { RequestHandler } from "express";
+import express from "express";
 import fs from "fs";
-import { IncomingMessage, Server, ServerResponse } from "http";
+import type { Server as HttpServer } from "http";
 import { createServer } from "https";
 import path from "path";
 import { Logger } from "../logging/Logger";
@@ -10,10 +11,10 @@ import { session } from "./middlewares/session";
 import { oauthRouter } from "./routes/oauthRouter";
 import { router } from "./routes/router";
 
-export class UnclassifiedPhotosServer {
+export class Server {
   private port = process.env.PORT;
   private app = express();
-  private server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
+  private server: HttpServer | undefined;
 
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
     this.app.set("views", path.join(__dirname, "./views"));

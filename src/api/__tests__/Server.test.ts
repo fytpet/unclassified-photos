@@ -1,7 +1,8 @@
 // jest.mock("../../logging/Logger.ts");
-import axios, { AxiosResponse } from "axios";
-import { RequestHandler } from "express";
-import { UnclassifiedPhotosServer } from "../UnclassifiedPhotosServer";
+import type { AxiosResponse } from "axios";
+import type { RequestHandler } from "express";
+import { Server } from "../Server";
+import axios from "axios";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";
@@ -15,7 +16,7 @@ const OAUTH_ROUTE = `${HOME_ROUTE}/oauth`;
 const REDIRECT_ROUTE_WITH_ERROR = `${HOME_ROUTE}/oauth/redirect?error=${REDIRECT_ERROR}`;
 const UNKNOWN_ROUTE = `${HOME_ROUTE}/unknown`;
 
-let server: UnclassifiedPhotosServer;
+let server: Server;
 let response: AxiosResponse;
 const destroySession = jest.fn();
 let redirect: jest.SpyInstance;
@@ -148,7 +149,7 @@ afterEach(() => {
 
 function startServer(handler: RequestHandler, startingRoute = SIGN_IN_ROUTE) {
   beforeEach(async () => {
-    server = new UnclassifiedPhotosServer(handler);
+    server = new Server(handler);
     server.start();
 
     const response = await axios.get(startingRoute);

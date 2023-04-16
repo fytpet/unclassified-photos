@@ -1,6 +1,7 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosError } from "axios";
 import { Logger } from "../../logging/Logger";
-import { Session } from "../../types/types";
+import type { Session } from "../../types/types";
 
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 
