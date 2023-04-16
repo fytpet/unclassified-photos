@@ -1,7 +1,7 @@
 import express, { Request } from "express";
-import { Logger } from "../logging/Logger";
-import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../network/OAuthProviderClient";
-import { PhotosService } from "../services/PhotosService";
+import { Logger } from "../../logging/Logger";
+import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
+import { PhotosService } from "../../services/PhotosService";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 

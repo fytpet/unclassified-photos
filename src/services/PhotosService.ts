@@ -1,6 +1,6 @@
 import { Logger } from "../logging/Logger";
-import { PhotosCursor } from "../network/PhotosCursor";
-import { PhotosLibraryClient } from "../network/PhotosLibraryClient";
+import { PhotosLibraryClient } from "../network/clients/PhotosLibraryClient";
+import { PhotosCursor } from "../network/cursors/PhotosCursor";
 import { Photo, Session } from "../types/types";
 
 const MAXIMUM_UNCLASSIFIED_PHOTOS_COUNT = 100;

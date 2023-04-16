@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import winston from "winston";
 
 export class Logger {
@@ -17,7 +18,7 @@ export class Logger {
     ]
   });
 
-  static error(err: string | Error | unknown, id?: string) {
+  static error(err: string | Error | unknown, id: string) {
     if (typeof(err) === "string") {
       this.logger.error(this.toLogMessage(err, id));
       return;
@@ -33,6 +34,27 @@ export class Logger {
 
   static info(message: string, id?: string) {
     this.logger.info(this.toLogMessage(message, id));
+  }
+
+  static response(res: AxiosResponse, id: string) {
+    const method = res.config.method?.toUpperCase() ?? "";
+    const path = res.config.url?.split("?")[0] ?? res.config.url ?? "";
+    const status = res.status;
+
+    this.info(`[OUT] ${method} ${path} ${status}`, id);
+  }
+
+  static responseError(
+    url: string | undefined,
+    methodName: string | undefined,
+    statusNumber: number | undefined,
+    id: string
+  ) {
+    const method = methodName?.toUpperCase() ?? "";
+    const path = url?.split("?")[0] ?? url ?? "";
+    const status = statusNumber ?? "";
+
+    this.error(`[OUT] ${method} ${path} ${status}`, id);
   }
 
   private static toLogMessage(message: string, id?: string) {

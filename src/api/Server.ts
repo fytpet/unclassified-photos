@@ -1,13 +1,13 @@
 import express, { RequestHandler } from "express";
+import fs from "fs";
 import { IncomingMessage, Server, ServerResponse } from "http";
 import { createServer } from "https";
 import path from "path";
-import fs from "fs";
 import { Logger } from "../logging/Logger";
-import { errorHandler } from "../middlewares/errorHandler";
-import { requestLogger } from "../middlewares/requestLogger";
-import { session } from "../middlewares/session";
-import { router } from "../routes/routes";
+import { errorHandler } from "./middlewares/errorHandler";
+import { requestLogger } from "./middlewares/requestLogger";
+import { session } from "./middlewares/session";
+import { router } from "./routes/routes";
 
 export class UnclassifiedPhotosServer {
   private port = process.env.PORT;
@@ -15,7 +15,7 @@ export class UnclassifiedPhotosServer {
   private server: Server<typeof IncomingMessage, typeof ServerResponse> | undefined;
 
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
-    this.app.set("views", path.join(__dirname, "../views"));
+    this.app.set("views", path.join(__dirname, "./views"));
     this.app.set("view engine", "ejs");
     this.app.use(session);
     this.app.use(express.static("./public"));

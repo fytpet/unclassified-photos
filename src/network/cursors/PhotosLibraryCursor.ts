@@ -1,5 +1,5 @@
-import { PageResults } from "../types/types";
-import { PhotosLibrarySearchParams } from "./PhotosLibrarySearchParams";
+import { PageResults } from "../../types/types";
+import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams";
 
 export type PhotosLibraryQuery<T> = (p: PhotosLibrarySearchParams) => Promise<PageResults<T>>;
 
