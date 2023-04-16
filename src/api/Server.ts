@@ -7,7 +7,8 @@ import { Logger } from "../logging/Logger";
 import { errorHandler } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 import { session } from "./middlewares/session";
-import { router } from "./routes/routes";
+import { oauthRouter } from "./routes/oauthRouter";
+import { router } from "./routes/router";
 
 export class UnclassifiedPhotosServer {
   private port = process.env.PORT;
@@ -21,6 +22,7 @@ export class UnclassifiedPhotosServer {
     this.app.use(express.static("./public"));
     this.app.use(requestLogger);
     this.app.use(middleware);
+    this.app.use("/oauth", oauthRouter);
     this.app.use("/", router);
     this.app.use(errorHandler);
   }

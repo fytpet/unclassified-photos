@@ -50,8 +50,8 @@ function whenNavigatingTo(route: string) {
   });
 }
 
-function thenRenders(error: string) {
-  expect(response.data).toContain(error);
+function thenRenders(expected: string) {
+  expect(response.data).toContain(expected);
 }
 
 describe("given unauthenticated", () => {
