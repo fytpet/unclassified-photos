@@ -21,3 +21,11 @@ nav {
   object-fit: cover;
   margin: 5px;
 }
+
+.btn-google:active {
+  background: url("btn_google_signin_dark_pressed_web.png");
+}
+
+a:focus > .btn-google {
+  background: url("btn_google_signin_dark_focus_web.png");
+}

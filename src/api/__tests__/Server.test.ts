@@ -1,7 +1,7 @@
 // jest.mock("../../logging/Logger.ts");
 import axios, { AxiosResponse } from "axios";
 import { RequestHandler } from "express";
-import { UnclassifiedPhotosServer } from "../Server";
+import { UnclassifiedPhotosServer } from "../UnclassifiedPhotosServer";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";
