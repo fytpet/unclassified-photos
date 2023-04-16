@@ -1,5 +1,5 @@
-export interface ItemsResponse<T> {
-  items: T[];
+export interface PageResults<T> {
+  results: T[] | undefined;
   nextPageToken: string | undefined;
 }
 

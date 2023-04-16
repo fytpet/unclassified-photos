@@ -25,18 +25,10 @@ jest.mock("../ApiClient", () => {
 });
 
 describe("PhotosLibraryClient", () => {
-  it("should return empty list when photos response is empty", async () => {
-    const client = new PhotosLibraryClient({ id: SOME_SESSION_ID });
-
-    const actual = await client.fetchPhotos();
-
-    expect(actual).toStrictEqual([]);
-  });
-
   it("should return empty list when albums response is empty", async () => {
     const client = new PhotosLibraryClient({ id: SOME_SESSION_ID });
 
-    const actual = await client.fetchAlbums();
+    const actual = await client.fetchAllAlbums();
 
     expect(actual).toStrictEqual([]);
   });
@@ -44,7 +36,7 @@ describe("PhotosLibraryClient", () => {
   it("should return empty list when photos of album response is empty", async () => {
     const client = new PhotosLibraryClient({ id: SOME_SESSION_ID });
 
-    const actual = await client.fetchPhotosOfAlbum(SOME_ALBUM);
+    const actual = await client.fetchAllPhotosOfAlbum(SOME_ALBUM);
 
     expect(actual).toStrictEqual([]);
   });
