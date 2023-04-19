@@ -30,6 +30,7 @@ export class Server {
 
     this.app.set("views", path.join(__dirname, "./views"));
     this.app.set("view engine", "ejs");
+    this.app.disable("x-powered-by");
     this.app.use(helmet(helmetConfig));
     this.app.use(session);
     this.app.use(express.static("./public"));

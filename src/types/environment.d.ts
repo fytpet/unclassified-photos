@@ -7,6 +7,7 @@ declare global {
       PORT: string;
       HTTPS: string;
       SESSION_SECRET: string;
+      NODE_ENV: string;
     }
   }
 }
