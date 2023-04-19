@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import express from "express";
 import fs from "fs";
+import helmet from "helmet";
 import type { Server as HttpServer } from "http";
 import { createServer } from "https";
 import path from "path";
@@ -19,6 +20,7 @@ export class Server {
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
     this.app.set("views", path.join(__dirname, "./views"));
     this.app.set("view engine", "ejs");
+    this.app.use(helmet());
     this.app.use(session);
     this.app.use(express.static("./public"));
     this.app.use(requestLogger);
