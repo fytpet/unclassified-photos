@@ -7,7 +7,7 @@
       Search your Google Photos Library for any photos that are not in any album.
     </p>
     <form method="post" action="/">
-      <button id="search-button" class="button is-primary" type="submit" onclick="onSubmit()">
+      <button id="search-button" class="button is-primary" type="submit">
         <span class="icon-text">
           <span class="icon">
             <i class="fas fa-search"></i>
@@ -17,11 +17,7 @@
       </button>
     </form>
   </section>
-  <script>
-    function onSubmit() {
-      document.querySelector("#search-button").classList.add("is-loading");
-    }
-  </script>
+  <script src="home.js"></script>
 </body>
 
 </html>
