@@ -18,9 +18,19 @@ export class Server {
   private server: HttpServer | undefined;
 
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
+    const helmetConfig = {
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          "img-src": ["'self'", "https://lh3.googleusercontent.com"],
+        }
+      },
+      crossOriginEmbedderPolicy: false,
+    };
+
     this.app.set("views", path.join(__dirname, "./views"));
     this.app.set("view engine", "ejs");
-    this.app.use(helmet());
+    this.app.use(helmet(helmetConfig));
     this.app.use(session);
     this.app.use(express.static("./public"));
     this.app.use(requestLogger);
