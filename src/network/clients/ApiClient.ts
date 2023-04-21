@@ -1,5 +1,7 @@
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import axios, { AxiosError } from "axios";
+import { EXPIRED_SESSION_ERR_MSG, GENERIC_ERR_MSG } from "../../exceptions/errorMessages";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
 import { Logger } from "../../logging/Logger";
 import type { Session } from "../../types/types";
 
@@ -7,7 +9,6 @@ const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 
 export class ApiClient {
   private readonly axios: AxiosInstance;
-  private readonly session: Session;
 
   constructor(session: Session) {
     this.axios = axios.create({
@@ -20,12 +21,11 @@ export class ApiClient {
       },
     });
     this.axios.interceptors.response.use((res) => {
-      Logger.response(res, session.id);
+      Logger.httpResponse(res);
       return res;
     }, (err: AxiosError) => {
-      throw this.parseError(err, err.config?.url);
+      throw this.parseError(err);
     });
-    this.session = session;
   }
 
   async get<T>(url: string) {
@@ -36,23 +36,23 @@ export class ApiClient {
     return this.axios.post<T>(url, data, config);
   }
 
-  private parseError(err: unknown, url: string | undefined): Error {
+  private parseError(err: unknown): Error {
     if (err instanceof AxiosError) {
-      const { config, response } = err as AxiosError;
+      const { response } = err as AxiosError;
       const data = response?.data;
 
-      Logger.responseError(url, config?.method, response?.status, this.session.id);
-      Logger.error(data, this.session.id);
+      Logger.httpError(err);
+      Logger.error(data);
 
       if (data instanceof Object) {
         if ("error" in data && typeof data.error === "string") {
           if (data.error === "invalid_grant") {
-            return new Error("Your session has expired. Try signing in again.");
+            return new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
           }
         }
       }
     }
 
-    return new Error("An unknown error occurred. Try again later.");
+    return new UserFriendlyError(GENERIC_ERR_MSG);
   }
 }

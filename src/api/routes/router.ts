@@ -1,5 +1,7 @@
 import type { Request } from "express";
 import express from "express";
+import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
 import { Logger } from "../../logging/Logger";
 import { PhotosService } from "../../services/PhotosService";
 
@@ -26,7 +28,7 @@ router.get("/sign-in", (req, res) => {
 router.get("/sign-out", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      Logger.error(err, req.sessionID);
+      Logger.error(err);
     }
   });
   res.redirect("/sign-in");
@@ -36,7 +38,7 @@ router.post("/", (req, res, next) => {
   const { bearer } = req.session;
 
   if (!bearer) {
-    throw new Error("Could not view results while signed out. Sign in and try again.");
+    throw new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
   }
 
   const photosService = new PhotosService({ id: req.sessionID, bearer });

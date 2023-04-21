@@ -1,5 +1,6 @@
-import type { AxiosResponse } from "axios";
+import type { AxiosError, AxiosResponse } from "axios";
 import winston from "winston";
+import { LoggingStorage } from "./AsyncLocalStorage";
 
 export class Logger {
   private static logger = winston.createLogger({
@@ -18,49 +19,47 @@ export class Logger {
     ]
   });
 
-  static error(err: string | Error | unknown, id: string) {
-    if (typeof(err) === "string") {
-      this.logger.error(this.toLogMessage(err, id));
+  static error(err: string | Error | unknown) {
+    if (typeof err === "string") {
+      this.logger.error(this.format(err));
       return;
     }
-  
+
     if (err instanceof Error) {
-      this.logger.error(this.toLogMessage(err.message, id));
+      this.logger.error(this.format(err.stack ?? err.message));
       return;
     }
 
-    this.logger.error(this.toLogMessage(JSON.stringify(err), id));
+    this.logger.error(this.format(JSON.stringify(err)));
   }
 
-  static info(message: string, id?: string) {
-    this.logger.info(this.toLogMessage(message, id));
+  static info(message: string) {
+    this.logger.info(this.format(message));
   }
 
-  static response(res: AxiosResponse, id: string) {
-    const method = res.config.method?.toUpperCase() ?? "";
-    const path = res.config.url?.split("?")[0] ?? res.config.url ?? "";
-    const status = res.status;
+  static httpResponse({ config, status }: AxiosResponse) {
+    const method = config.method?.toUpperCase() ?? "";
+    const path = config.url?.split("?")[0] ?? config.url ?? "";
 
-    this.info(`[OUT] ${method} ${path} ${status}`, id);
+    this.info(`[OUT] ${method} ${path} ${status}`);
   }
 
-  static responseError(
-    url: string | undefined,
-    methodName: string | undefined,
-    statusNumber: number | undefined,
-    id: string
-  ) {
-    const method = methodName?.toUpperCase() ?? "";
-    const path = url?.split("?")[0] ?? url ?? "";
-    const status = statusNumber ?? "";
+  static httpError({ config, response }: AxiosError) {
+    const method = config?.method?.toUpperCase() ?? "";
+    const path = config?.url?.split("?")[0] ?? config?.url ?? "";
+    const status = response?.status ?? "";
 
-    this.error(`[OUT] ${method} ${path} ${status}`, id);
+    this.error(`[OUT] ${method} ${path} ${status}`);
   }
 
-  private static toLogMessage(message: string, id?: string) {
-    const date = new Date().toISOString();
-    const idFallbacked = id ?? "--------------------------------";
-    const formatted = `[${date}] [${idFallbacked}] ${message}`;
-    return formatted.replace(/ {2}|\r\n|\n|\r/gm, " ");
+  private static format(message: string) {
+    const timestamp = new Date().toISOString();
+    const condensedMessage = message.replace(/ {2}|\r\n|\n|\r/gm, " ");
+
+    const loggingStore = LoggingStorage.getStore();
+    const sessionId = loggingStore?.sessionId ?? "--------------------------------";
+    const requestId = loggingStore?.requestId ?? "------------------------------------";
+
+    return `[${timestamp}] [${sessionId}] [${requestId}] ${condensedMessage}`;
   }
 }

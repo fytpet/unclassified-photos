@@ -3,8 +3,8 @@ import { Logger } from "../../logging/Logger";
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   res.on("finish", () => {
-    const url = req.url.split("?")[0] ?? req.url;
-    Logger.info(`[IN] ${req.method} ${url} ${res.statusCode}`, req.sessionID);
+    const url = req.originalUrl.split("?")[0] ?? req.originalUrl;
+    Logger.info(`[IN] ${req.method} ${url} ${res.statusCode}`);
   });
 
   next();

@@ -7,6 +7,7 @@ import { createServer } from "https";
 import path from "path";
 import { Logger } from "../logging/Logger";
 import { errorHandler } from "./middlewares/errorHandler";
+import { loggingStoreInitializer } from "./middlewares/loggingStoreInitializer";
 import { requestLogger } from "./middlewares/requestLogger";
 import { session } from "./middlewares/session";
 import { oauthRouter } from "./routes/oauthRouter";
@@ -33,6 +34,7 @@ export class Server {
     this.app.disable("x-powered-by");
     this.app.use(helmet(helmetConfig));
     this.app.use(session);
+    this.app.use(loggingStoreInitializer);
     this.app.use(express.static("./public"));
     this.app.use(requestLogger);
     this.app.use(middleware);

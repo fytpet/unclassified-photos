@@ -1,5 +1,7 @@
 import express from "express";
-import { OAUTH_PROVIDER_BASE_URL, OAuthProviderClient, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
+import { AUTHENTICATION_ERR_MSG, buildSignInErrMsg } from "../../exceptions/errorMessages";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
+import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 
 export const oauthRouter = express.Router();
@@ -18,10 +20,10 @@ oauthRouter.get("/", (_, res) => {
 oauthRouter.get("/redirect", (req, res, next) => {
   const { code, error } = req.query;
   if (typeof(error) === "string") {
-    throw new Error(`Could not sign you in: ${error}`);
+    throw new UserFriendlyError(buildSignInErrMsg(error));
   }
   if (typeof(code) !== "string") {
-    throw new Error("Could not sign you in: authentication failed");
+    throw new UserFriendlyError(AUTHENTICATION_ERR_MSG);
   }
 
   const oauthProviderClient = new OAuthProviderClient({ id: req.sessionID });

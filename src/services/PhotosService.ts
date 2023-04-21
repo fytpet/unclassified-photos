@@ -7,11 +7,9 @@ const MAXIMUM_UNCLASSIFIED_PHOTOS_COUNT = 100;
 
 export class PhotosService {
   private readonly photosLibraryClient;
-  private readonly session: Session;
 
   constructor(session: Session) {
     this.photosLibraryClient = new PhotosLibraryClient(session);
-    this.session = session;
   }
 
   async findUnclassifiedPhotos() {
@@ -32,7 +30,7 @@ export class PhotosService {
       }
     } while (cursor.hasNextPage());
 
-    Logger.info(`Found ${unclassifiedPhotos.length} unclassified photos`, this.session.id);
+    Logger.info(`Found ${unclassifiedPhotos.length} unclassified photos`);
     return unclassifiedPhotos;
   }
 }
