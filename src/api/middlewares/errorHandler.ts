@@ -14,6 +14,6 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
 
   req.session.destroy((err) => {
     if (err) Logger.error(err);
-    res.redirect("/sign-in");
   });
+  res.redirect("/sign-in");
 }
