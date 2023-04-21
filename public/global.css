@@ -23,9 +23,9 @@ nav {
 }
 
 .btn-google:active {
-  background: url("btn_google_signin_dark_pressed_web.png");
+  background: url("google/btn_google_signin_dark_pressed_web.png");
 }
 
 a:focus > .btn-google {
-  background: url("btn_google_signin_dark_focus_web.png");
+  background: url("google/btn_google_signin_dark_focus_web.png");
 }
