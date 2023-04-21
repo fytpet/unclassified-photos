@@ -1,21 +1,20 @@
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import axios, { AxiosError } from "axios";
-import { EXPIRED_SESSION_ERR_MSG, GENERIC_ERR_MSG } from "../../exceptions/errorMessages";
+import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages";
 import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
 import { Logger } from "../../logging/Logger";
-import type { Session } from "../../types/types";
 
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 
 export class ApiClient {
   private readonly axios: AxiosInstance;
 
-  constructor(session: Session) {
+  constructor(bearer?: string) {
     this.axios = axios.create({
       baseURL: PHOTOS_LIBRARY_BASE_URL,
       headers: {
         common: {
-          "Authorization" : session.bearer && `Bearer ${session.bearer}`,
+          "Authorization" : bearer && `Bearer ${bearer}`,
           "Content-Type": "application/json"
         }
       },
@@ -36,7 +35,7 @@ export class ApiClient {
     return this.axios.post<T>(url, data, config);
   }
 
-  private parseError(err: unknown): Error {
+  private parseError(err: unknown) {
     if (err instanceof AxiosError) {
       const { response } = err as AxiosError;
       const data = response?.data;
@@ -53,6 +52,6 @@ export class ApiClient {
       }
     }
 
-    return new UserFriendlyError(GENERIC_ERR_MSG);
+    return err;
   }
 }

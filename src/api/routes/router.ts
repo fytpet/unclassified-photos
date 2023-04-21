@@ -27,11 +27,9 @@ router.get("/sign-in", (req, res) => {
 
 router.get("/sign-out", (req, res) => {
   req.session.destroy((err) => {
-    if (err) {
-      Logger.error(err);
-    }
+    if (err) Logger.error(err);
+    res.redirect("/sign-in");
   });
-  res.redirect("/sign-in");
 });
 
 router.post("/", (req, res, next) => {
@@ -41,7 +39,7 @@ router.post("/", (req, res, next) => {
     throw new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
   }
 
-  const photosService = new PhotosService({ id: req.sessionID, bearer });
+  const photosService = new PhotosService(bearer);
   photosService.findUnclassifiedPhotos()
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));

@@ -40,8 +40,3 @@ interface MediaMetadata {
 export interface AccessTokenResponse {
   access_token: string;
 }
-
-export interface Session {
-  id: string;
-  bearer?: string;
-}

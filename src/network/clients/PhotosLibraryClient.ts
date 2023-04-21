@@ -1,4 +1,4 @@
-import type { Album, AlbumsResponse, Photo, PhotosResponse, Session } from "../../types/types";
+import type { Album, AlbumsResponse, Photo, PhotosResponse } from "../../types/types";
 import { PhotosLibraryCursor } from "../cursors/PhotosLibraryCursor";
 import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams";
 import { ApiClient } from "./ApiClient";
@@ -9,8 +9,8 @@ export const SEARCH_PAGE_SIZE = 100;
 export class PhotosLibraryClient {
   private readonly apiClient: ApiClient;
 
-  constructor(session: Session) {
-    this.apiClient = new ApiClient(session);
+  constructor(bearer: string) {
+    this.apiClient = new ApiClient(bearer);
   }
 
   fetchPhotos = async (params: PhotosLibrarySearchParams) => {

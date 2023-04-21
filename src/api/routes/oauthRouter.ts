@@ -1,6 +1,7 @@
 import express from "express";
 import { AUTHENTICATION_ERR_MSG, buildSignInErrMsg } from "../../exceptions/errorMessages";
 import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
+import { Logger } from "../../logging/Logger";
 import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 
@@ -26,11 +27,13 @@ oauthRouter.get("/redirect", (req, res, next) => {
     throw new UserFriendlyError(AUTHENTICATION_ERR_MSG);
   }
 
-  const oauthProviderClient = new OAuthProviderClient({ id: req.sessionID });
-  oauthProviderClient.createAccessToken(code)
+  new OAuthProviderClient().createAccessToken(code)
     .then((accessToken) => {
-      req.session.bearer = accessToken;
-      res.redirect("/");
+      req.session.regenerate((err) => {
+        if (err) Logger.error(err);
+        req.session.bearer = accessToken;
+        res.redirect("/");
+      });
     })
     .catch((err) => next(err));
 });

@@ -1,15 +1,15 @@
 import { Logger } from "../logging/Logger";
 import { PhotosLibraryClient } from "../network/clients/PhotosLibraryClient";
 import { PhotosCursor } from "../network/cursors/PhotosCursor";
-import type { Photo, Session } from "../types/types";
+import type { Photo } from "../types/types";
 
 const MAXIMUM_UNCLASSIFIED_PHOTOS_COUNT = 100;
 
 export class PhotosService {
   private readonly photosLibraryClient;
 
-  constructor(session: Session) {
-    this.photosLibraryClient = new PhotosLibraryClient(session);
+  constructor(bearer: string) {
+    this.photosLibraryClient = new PhotosLibraryClient(bearer);
   }
 
   async findUnclassifiedPhotos() {
