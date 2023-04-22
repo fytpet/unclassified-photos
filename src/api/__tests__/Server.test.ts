@@ -1,18 +1,17 @@
 jest.mock("../../logging/Logger");
 
-import { OAuthProviderClientMock, SOME_ACCESS_TOKEN, SOME_REDIRECT_CODE } from "./OAuthProviderClientMock";
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-jest.mock("../../network/clients/OAuthProviderClient", () => OAuthProviderClientMock);
-
+import { createAccessTokenMock, SOME_ACCESS_TOKEN, SOME_REDIRECT_CODE } from "./OAuthProviderClientMock";
 import type { AxiosResponse } from "axios";
-import type { RequestHandler } from "express";
 import { Server } from "../Server";
 import axios from "axios";
-import { AUTHENTICATION_ERR_MSG, buildSignInErrMsg } from "../../exceptions/errorMessages";
+import {
+  AUTHENTICATION_ERR_MSG, signInErrMsg, EXPIRED_SESSION_ERR_MSG, GENERIC_ERR_MSG
+} from "../../exceptions/errorMessages";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";
-const SOME_ERROR_MESSAGE = "Something went wrong! Try again.";
+const SOME_ERROR_MESSAGE = "Oops! Something went wrong!";
 const SOME_REDIRECT_ERROR = "redirection_failed";
 
 const HOME_ROUTE = process.env.BASE_URI;
@@ -30,42 +29,45 @@ const destroySession = jest.fn();
 const regenerateSession = jest.fn();
 let redirect: jest.SpyInstance = jest.fn();
 
-function givenUnauthenticated() {
-  startServer((req, _, next) => {
-    req.session.error = SOME_ERROR_MESSAGE;
-    next();
+function givenUnauthenticatedSession() {
+  beforeEach(async () => {
+    await givenSession();
   });
 }
 
-function givenAuthenticated() {
-  startServer((req, _, next) => {
-    req.session.bearer = SOME_ACCESS_TOKEN;
-    req.session.save(() => next());
-  }, HOME_ROUTE);
+function givenAuthenticatedSession() {
+  beforeEach(async () => {
+    await givenSession();
+    response = await axios.get(REDIRECT_ROUTE_WITH_CODE);
+  });
 }
 
-function givenSession() {
-  startServer((req, res, next) => {
+async function givenSession() {
+  createAccessTokenMock.mockImplementation(
+    (code: string) => Promise.resolve(code === SOME_REDIRECT_CODE ? SOME_ACCESS_TOKEN : undefined)
+  );
+
+  server = new Server((req, res, next) => {
     req.session.destroy = destroySession.mockImplementation((callback: () => void) => callback());
     req.session.regenerate = regenerateSession.mockImplementation((callback: () => void) => callback());
     redirect = jest.spyOn(res, "redirect");
     next();
   });
-}
+  server.start();
 
-function startServer(handler: RequestHandler, startingRoute = SIGN_IN_ROUTE) {
-  beforeEach(async () => {
-    server = new Server(handler);
-    server.start();
-
-    const response = await axios.get(startingRoute);
-    axios.defaults.headers["Cookie"] = response.headers["set-cookie"] ?? "";
-  });
+  const response = await axios.get(HOME_ROUTE);
+  axios.defaults.headers["Cookie"] = response.headers["set-cookie"] ?? "";
 }
 
 function whenNavigatingTo(route: string) {
   beforeEach(async () => {
     response = await axios.get(route);
+  });
+}
+
+function whenSubmittingTo(route: string) {
+  beforeEach(async () => {
+    response = await axios.post(route);
   });
 }
 
@@ -79,135 +81,116 @@ afterEach(() => {
   server.close();
 });
 
-describe("given unauthenticated", () => {
-  givenUnauthenticated();
+describe("given unauthenticated session", () => {
+  givenUnauthenticatedSession();
 
   describe("when navigating to sign-in route", () => {
     whenNavigatingTo(SIGN_IN_ROUTE);
 
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
-    });
-
-    test("then renders error message", () => {
-      thenRenders(SOME_ERROR_MESSAGE);
-    });
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
   });
 
   describe("when navigating to home route", () => {
     whenNavigatingTo(HOME_ROUTE);
   
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
-    });
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
+  });
 
-    test("then renders error message", () => {
-      thenRenders(SOME_ERROR_MESSAGE);
-    });
+  describe("when submitting to home route", () => {
+    whenSubmittingTo(HOME_ROUTE);
+
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
+    test("then renders expired session error message", () => thenRenders(EXPIRED_SESSION_ERR_MSG));
   });
 
   describe("when navigating to unknown route", () => {
     whenNavigatingTo(UNKNOWN_ROUTE);
 
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
-    });
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
   });
 });
 
-describe("given authenticated", () => {
-  givenAuthenticated();
+describe("given authenticated session", () => {
+  givenAuthenticatedSession();
 
   describe("when navigating to sign-in route", () => {
     whenNavigatingTo(SIGN_IN_ROUTE);
 
-    test("then renders home page", () => {
-      thenRenders(HOME_PAGE);
-    });
+    test("then renders home page", () => thenRenders(HOME_PAGE));
   });
 
   describe("when navigating to home route", () => {
     whenNavigatingTo(HOME_ROUTE);
 
-    test("then renders home page", () => {
-      thenRenders(HOME_PAGE);
-    });
+    test("then renders home page", () => thenRenders(HOME_PAGE));
   });
 
   describe("when navigating to unknown route", () => {
     whenNavigatingTo(UNKNOWN_ROUTE);
 
-    test("then renders sign-in page", () => {
-      thenRenders(HOME_PAGE);
-    });
+    test("then renders home page", () => thenRenders(HOME_PAGE));
   });
 });
 
 describe("given session", () => {
-  givenSession();
+  givenUnauthenticatedSession();
 
   describe("when navigating to sign-out route", () => {
     whenNavigatingTo(SIGN_OUT_ROUTE);
 
-    test("then session is destroyed", () => {
-      expect(destroySession).toHaveBeenCalledTimes(1);
-    });
-
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
-    });
+    test("then session is destroyed", () => expect(destroySession).toHaveBeenCalledTimes(1));
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
   });
 
   describe("when navigating to oauth route", () => {
     whenNavigatingTo(OAUTH_ROUTE);
   
-    test("then user is redirected to oauth provider", () => {
-      expect(redirect).toHaveBeenCalledWith(expectedOAuthProviderUrl());
-    });
+    test("then user is redirected to oauth provider", () => 
+      expect(redirect).toHaveBeenCalledWith(expectedOAuthProviderUrl())
+    );
   });
 
   describe("when navigating to redirect route with error", () => {
     whenNavigatingTo(REDIRECT_ROUTE_WITH_ERROR);
 
-    test("then session is regenerated", () => {
-      expect(regenerateSession).toHaveBeenCalledTimes(1);
-    });
-
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
-    });
-
-    test("then renders redirect error", () => {
-      thenRenders(buildSignInErrMsg(SOME_REDIRECT_ERROR));
-    });
+    test("then session is regenerated", () => expect(regenerateSession).toHaveBeenCalledTimes(1));
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
+    test("then renders sign-in redirect error message", () => thenRenders(signInErrMsg(SOME_REDIRECT_ERROR)));
   });
 
   describe("when navigating to redirect route without code", () => {
     whenNavigatingTo(REDIRECT_ROUTE_WITHOUT_CODE);
 
-    test("then session is regenerated", () => {
-      expect(regenerateSession).toHaveBeenCalledTimes(1);
-    });
-
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
-    });
-
-    test("then renders redirect error", () => {
-      thenRenders(AUTHENTICATION_ERR_MSG);
-    });
+    test("then session is regenerated", () => expect(regenerateSession).toHaveBeenCalledTimes(1));
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
+    test("then renders authentication error message", () => thenRenders(AUTHENTICATION_ERR_MSG));
   });
 
   describe("when navigating to redirect route with code", () => {
     whenNavigatingTo(REDIRECT_ROUTE_WITH_CODE);
 
-    test("then session is regenerated", () => {
-      expect(regenerateSession).toHaveBeenCalledTimes(1);
+    test("then session is regenerated", () => expect(regenerateSession).toHaveBeenCalledTimes(1));
+    test("then renders home page", () => thenRenders(HOME_PAGE));
+  });
+
+  describe("when access token creation fails", () => {
+    beforeEach(async () => {
+      createAccessTokenMock.mockImplementation(() => Promise.reject(SOME_ERROR_MESSAGE));
+      response = await axios.get(REDIRECT_ROUTE_WITH_CODE);
     });
 
-    test("then renders home page", () => {
-      thenRenders(HOME_PAGE);
+    test("then session is regenerated", () => expect(regenerateSession).toHaveBeenCalledTimes(1));
+    test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
+    test("then renders generic error message", () => thenRenders(GENERIC_ERR_MSG));
+  });
+
+  describe("when access token creation fails with user-friendly message", () => {
+    beforeEach(async () => {
+      createAccessTokenMock.mockImplementation(() => Promise.reject(new UserFriendlyError(SOME_ERROR_MESSAGE)));
+      response = await axios.get(REDIRECT_ROUTE_WITH_CODE);
     });
+
+    test("then renders error message", () => thenRenders(SOME_ERROR_MESSAGE));
   });
 });
 

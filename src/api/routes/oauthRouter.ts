@@ -1,5 +1,5 @@
 import express from "express";
-import { AUTHENTICATION_ERR_MSG, buildSignInErrMsg } from "../../exceptions/errorMessages";
+import { AUTHENTICATION_ERR_MSG, signInErrMsg } from "../../exceptions/errorMessages";
 import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
 import { Logger } from "../../logging/Logger";
 import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
@@ -21,13 +21,14 @@ oauthRouter.get("/", (_, res) => {
 oauthRouter.get("/redirect", (req, res, next) => {
   const { code, error } = req.query;
   if (typeof(error) === "string") {
-    throw new UserFriendlyError(buildSignInErrMsg(error));
+    throw new UserFriendlyError(signInErrMsg(error));
   }
   if (typeof(code) !== "string") {
     throw new UserFriendlyError(AUTHENTICATION_ERR_MSG);
   }
 
-  new OAuthProviderClient().createAccessToken(code)
+  new OAuthProviderClient()
+    .createAccessToken(code)
     .then((accessToken) => {
       req.session.regenerate((err) => {
         if (err) Logger.error(err);

@@ -33,8 +33,8 @@ router.post("/", (req, res, next) => {
     throw new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
   }
 
-  const photosService = new PhotosService(bearer);
-  photosService.findUnclassifiedPhotos()
+  new PhotosService(bearer)
+    .findUnclassifiedPhotos()
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });
