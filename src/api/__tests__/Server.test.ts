@@ -1,4 +1,4 @@
-// jest.mock("../../logging/Logger.ts");
+jest.mock("../../logging/Logger.ts");
 import type { AxiosResponse } from "axios";
 import type { RequestHandler } from "express";
 import { Server } from "../Server";
@@ -19,7 +19,8 @@ const UNKNOWN_ROUTE = `${HOME_ROUTE}/unknown`;
 let server: Server;
 let response: AxiosResponse;
 const destroySession = jest.fn();
-let redirect: jest.SpyInstance;
+const regenerateSession = jest.fn();
+let redirect: jest.SpyInstance = jest.fn();
 
 function givenUnauthenticated() {
   startServer((req, _, next) => {
@@ -31,15 +32,14 @@ function givenUnauthenticated() {
 function givenAuthenticated() {
   startServer((req, _, next) => {
     req.session.bearer = "somesessionbearer";
-    req.session.save(() => {
-      next();
-    });
+    req.session.save(() => next());
   }, HOME_ROUTE);
 }
 
 function givenServer() {
   startServer((req, res, next) => {
-    req.session.destroy = destroySession;
+    req.session.destroy = destroySession.mockImplementation((callback: () => void) => callback());
+    req.session.regenerate = regenerateSession.mockImplementation((callback: () => void) => callback());
     redirect = jest.spyOn(res, "redirect");
     next();
   });
@@ -106,7 +106,7 @@ describe("given server", () => {
     whenNavigatingTo(SIGN_OUT_ROUTE);
 
     test("then session is destroyed", () => {
-      expect(destroySession).toHaveBeenCalled();
+      expect(destroySession).toHaveBeenCalledTimes(1);
     });
 
     test("then renders sign-in page", () => {
@@ -124,6 +124,10 @@ describe("given server", () => {
 
   describe("when navigating to redirect route with error", () => {
     whenNavigatingTo(REDIRECT_ROUTE_WITH_ERROR);
+
+    test("then session is destroyed", () => {
+      expect(regenerateSession).toHaveBeenCalledTimes(1);
+    });
 
     test("then renders sign-in page", () => {
       thenRenders(SIGN_IN_PAGE);
@@ -143,10 +147,6 @@ describe("given server", () => {
   });
 });
 
-afterEach(() => {
-  server.close();
-});
-
 function startServer(handler: RequestHandler, startingRoute = SIGN_IN_ROUTE) {
   beforeEach(async () => {
     server = new Server(handler);
@@ -158,6 +158,10 @@ function startServer(handler: RequestHandler, startingRoute = SIGN_IN_ROUTE) {
 
   afterEach(() => {
     delete axios.defaults.headers["Cookie"];
+    destroySession.mockClear();
+    regenerateSession.mockClear();
+    redirect.mockClear();
+    server.close();
   });
 }
 

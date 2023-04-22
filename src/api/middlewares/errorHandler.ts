@@ -6,14 +6,13 @@ import { Logger } from "../../logging/Logger";
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   Logger.error(err);
 
-  req.session.error = err instanceof UserFriendlyError ? err.message : GENERIC_ERR_MSG;
-
   if (res.headersSent) {
     return next(err);
   }
 
-  req.session.destroy((err) => {
-    if (err) Logger.error(err);
+  req.session.regenerate((regenerateError) => {
+    if (regenerateError) Logger.error(regenerateError);
+    req.session.error = err instanceof UserFriendlyError ? err.message : GENERIC_ERR_MSG;
+    res.redirect("/sign-in");
   });
-  res.redirect("/sign-in");
 }

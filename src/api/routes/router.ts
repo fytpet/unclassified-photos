@@ -28,8 +28,8 @@ router.get("/sign-in", (req, res) => {
 router.get("/sign-out", (req, res) => {
   req.session.destroy((err) => {
     if (err) Logger.error(err);
+    res.redirect("/sign-in");
   });
-  res.redirect("/sign-in");
 });
 
 router.post("/", (req, res, next) => {
