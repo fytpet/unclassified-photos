@@ -88,6 +88,10 @@ describe("given unauthenticated", () => {
     test("then renders sign-in page", () => {
       thenRenders(SIGN_IN_PAGE);
     });
+
+    test("then renders error message", () => {
+      thenRenders(SOME_ERROR_MESSAGE);
+    });
   });
 
   describe("when navigating to home route", () => {
@@ -99,6 +103,14 @@ describe("given unauthenticated", () => {
 
     test("then renders error message", () => {
       thenRenders(SOME_ERROR_MESSAGE);
+    });
+  });
+
+  describe("when navigating to unknown route", () => {
+    whenNavigatingTo(UNKNOWN_ROUTE);
+
+    test("then renders sign-in page", () => {
+      thenRenders(SIGN_IN_PAGE);
     });
   });
 });
@@ -118,6 +130,14 @@ describe("given authenticated", () => {
     whenNavigatingTo(HOME_ROUTE);
 
     test("then renders home page", () => {
+      thenRenders(HOME_PAGE);
+    });
+  });
+
+  describe("when navigating to unknown route", () => {
+    whenNavigatingTo(UNKNOWN_ROUTE);
+
+    test("then renders sign-in page", () => {
       thenRenders(HOME_PAGE);
     });
   });
@@ -187,14 +207,6 @@ describe("given session", () => {
 
     test("then renders home page", () => {
       thenRenders(HOME_PAGE);
-    });
-  });
-
-  describe("when navigating to unknown route", () => {
-    whenNavigatingTo(UNKNOWN_ROUTE);
-
-    test("then renders sign-in page", () => {
-      thenRenders(SIGN_IN_PAGE);
     });
   });
 });

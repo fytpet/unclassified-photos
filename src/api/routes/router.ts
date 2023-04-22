@@ -8,19 +8,13 @@ import { PhotosService } from "../../services/PhotosService";
 export const router = express.Router();
 
 router.get("/", (req, res) => {
-  if (!isAuthenticated(req)) {
-    res.redirect("/sign-in");
-    return;
-  }
+  if (!isAuthenticated(req)) return res.redirect("/sign-in");
 
   res.render("pages/home");
 });
 
 router.get("/sign-in", (req, res) => {
-  if (isAuthenticated(req)) {
-    res.redirect("/");
-    return;
-  }
+  if (isAuthenticated(req)) return res.redirect("/");
 
   res.render("pages/signIn", { error: popError(req) });
 });
