@@ -1,4 +1,10 @@
-jest.mock("../ApiClient");
+jest.mock("../ApiClient", () => ({
+  ApiClient: jest.fn().mockImplementation(() => ({
+    get: () => ({ data: {} }),
+    post: () => ({ data: {} })
+  })),
+}));
+
 import type { Album } from "../../../types/types";
 import { PhotosLibraryClient } from "../PhotosLibraryClient";
 
@@ -12,17 +18,6 @@ const SOME_ALBUM: Album = {
   coverPhotoBaseUrl: "www.example.com/travel/cover",
   coverPhotoMediaItemId: "72619"
 };
-
-jest.mock("../ApiClient", () => {
-  return {
-    ApiClient: jest.fn().mockImplementation(() => {
-      return {
-        get: () => ({ data: {} }),
-        post: () => ({ data: {} })
-      };
-    }),
-  };
-});
 
 describe("PhotosLibraryClient", () => {
   it("should return empty list when albums response is empty", async () => {
