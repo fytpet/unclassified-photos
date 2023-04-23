@@ -62,7 +62,7 @@ export class Server {
 
     this.gatekeeper = express()
       .use(unsecureHandler)
-      .listen(80, () => Logger.info("Server listening on 80"));
+      .listen(80, () => Logger.info("Gatekeeper listening on 80"));
   }
 
   private startUnsecure() {
