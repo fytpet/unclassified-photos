@@ -6,8 +6,9 @@
   "scripts": {
     "start": "ts-node ./src/app.ts",
     "test": "jest",
-    "validate": "eslint ./src",
-    "auto-fix": "eslint --fix ./src"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src"
   },
   "author": "Petros Fytilis",
   "license": "ISC",
@@ -27,7 +28,6 @@
     "@types/express-session": "^1.17.5",
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.7",
-    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "eslint": "^8.26.0",
