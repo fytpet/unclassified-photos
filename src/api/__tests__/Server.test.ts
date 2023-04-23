@@ -14,7 +14,7 @@ const HOME_PAGE = "<span>Search</span>";
 const SOME_ERROR_MESSAGE = "Oops! Something went wrong!";
 const SOME_REDIRECT_ERROR = "redirection_failed";
 
-const HOME_ROUTE = process.env.BASE_URI;
+const HOME_ROUTE = "http://localhost:3000";
 const SIGN_IN_ROUTE = `${HOME_ROUTE}/sign-in`;
 const SIGN_OUT_ROUTE = `${HOME_ROUTE}/sign-out`;
 const OAUTH_ROUTE = `${HOME_ROUTE}/oauth`;
@@ -196,8 +196,8 @@ describe("given session", () => {
 
 function expectedOAuthProviderUrl() {
   const params = new URLSearchParams();
-  params.append("client_id", "somegoogleclientid");
-  params.append("redirect_uri", "http://localhost:8080/oauth/redirect");
+  params.append("client_id", "some.google.client.id");
+  params.append("redirect_uri", "http://localhost:3000/oauth/redirect");
   params.append("response_type", "code");
   params.append("scope", "https://www.googleapis.com/auth/photoslibrary.readonly");
   params.append("prompt", "select_account");
