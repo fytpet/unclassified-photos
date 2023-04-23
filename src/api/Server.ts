@@ -8,14 +8,15 @@ import { Logger } from "../logging/Logger";
 import { errorHandler } from "./middlewares/errorHandler";
 import { helmetHandler } from "./middlewares/helmetHandler";
 import { loggingStoreInitializer } from "./middlewares/loggingStoreInitializer";
-import { unsecureHandler } from "./middlewares/unsecureHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 import { session } from "./middlewares/session";
+import { unsecureHandler } from "./middlewares/unsecureHandler";
 import { oauthRouter } from "./routes/oauthRouter";
 import { router } from "./routes/router";
 
 export class Server {
-  private port = process.env.PORT;
+  private httpPort = process.env.HTTP_PORT;
+  private httpsPort = process.env.HTTPS_PORT;
   private app = express();
   private server: HttpServer | undefined;
   private gatekeeper: HttpServer | undefined;
@@ -36,7 +37,9 @@ export class Server {
   }
 
   start() {
-    process.env.HTTPS === "yes" ? this.startSecure() : this.startUnsecure();
+    process.env.NODE_ENV === "production"
+      ? this.startProduction()
+      : this.startDevelopment();
   }
 
   close() {
@@ -44,20 +47,24 @@ export class Server {
     if (this.gatekeeper) this.gatekeeper.close();
   }
 
-  private startSecure() {
+  private startProduction() {
     this.server = createServer({
       key: fs.readFileSync("./ssl/privkey.pem"),
       cert: fs.readFileSync("./ssl/fullchain.pem"),
     }, this.app);
   
-    this.server.listen(443, () => Logger.info("Server listening on 443"));
+    this.server.listen(this.httpsPort, () => Logger.info(`Production server listening on ${this.httpsPort}`));
 
-    this.gatekeeper = express()
-      .use(unsecureHandler)
-      .listen(80, () => Logger.info("Gatekeeper listening on 80"));
+    this.startGatekeeper();
   }
 
-  private startUnsecure() {
-    this.server = this.app.listen(this.port, () => Logger.info(`Server listening on ${this.port}`));
+  private startGatekeeper() {
+    this.gatekeeper = express()
+      .use(unsecureHandler)
+      .listen(this.httpPort, () => Logger.info(`Gatekeeper listening on ${this.httpPort}`));
+  }
+
+  private startDevelopment() {
+    this.server = this.app.listen(this.httpPort, () => Logger.info(`Development server listening on ${this.httpPort}`));
   }
 }
