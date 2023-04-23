@@ -36,20 +36,12 @@ export class Server {
   }
 
   start() {
-    if (process.env.HTTPS === "yes") {
-      this.startSecure();
-    } else {
-      this.startUnsecure();
-    }
+    process.env.HTTPS === "yes" ? this.startSecure() : this.startUnsecure();
   }
 
   close() {
-    if (this.server) {
-      this.server.close();
-    }
-    if (this.gatekeeper) {
-      this.gatekeeper.close();
-    }
+    if (this.server) this.server.close();
+    if (this.gatekeeper) this.gatekeeper.close();
   }
 
   private startSecure() {
@@ -66,7 +58,6 @@ export class Server {
   }
 
   private startUnsecure() {
-    this.server = this.app.listen(this.port, () => Logger.info(`Server listening on ${this.port}`)
-    );
+    this.server = this.app.listen(this.port, () => Logger.info(`Server listening on ${this.port}`));
   }
 }
