@@ -4,7 +4,7 @@ import { LoggingStorage } from "./AsyncLocalStorage";
 
 export class Logger {
   private static logger = winston.createLogger({
-    level: "info",
+    level: "debug",
     transports: [
       new winston.transports.Console({
         format: winston.format.combine(
@@ -35,6 +35,10 @@ export class Logger {
 
   static info(message: string) {
     this.logger.info(this.format(message));
+  }
+
+  static debug(message: string) {
+    this.logger.debug(this.format(message));
   }
 
   static httpResponse({ config, status }: AxiosResponse) {
