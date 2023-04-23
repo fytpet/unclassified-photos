@@ -39,9 +39,8 @@ export class Server {
     if (process.env.HTTPS === "yes") {
       this.startSecure();
     } else {
-      this.server = this.app.listen(this.port);
+      this.startUnsecure();
     }
-    Logger.info(`Server listening on ${this.port}`);
   }
 
   close() {
@@ -57,10 +56,17 @@ export class Server {
     this.server = createServer({
       key: fs.readFileSync("./ssl/privkey.pem"),
       cert: fs.readFileSync("./ssl/fullchain.pem"),
-    }, this.app).listen(this.port);
+    }, this.app);
+  
+    this.server.listen(443, () => Logger.info("Server listening on 443"));
 
     this.gatekeeper = express()
       .use(unsecureHandler)
-      .listen(this.port);
+      .listen(80, () => Logger.info("Server listening on 80"));
+  }
+
+  private startUnsecure() {
+    this.server = this.app.listen(this.port, () => Logger.info(`Server listening on ${this.port}`)
+    );
   }
 }
