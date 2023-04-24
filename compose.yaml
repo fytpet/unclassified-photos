@@ -3,6 +3,7 @@ services:
     build: .
     image: unclassified-photos
     container_name: unclassified-photos
+    restart: unless-stopped
     ports:
     - "443:${HTTPS_PORT}"
     - "80:${HTTP_PORT}"
