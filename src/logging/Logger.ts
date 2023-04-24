@@ -13,7 +13,7 @@ export class Logger {
         ),
       }),
       new winston.transports.File({
-        filename: "info.log",
+        filename: "./logs/info.log",
         format: winston.format.simple()
       })
     ]
