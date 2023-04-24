@@ -1,5 +1,6 @@
 FROM node:18.16-bullseye-slim
 WORKDIR /app
+VOLUME ./logs
 COPY . .
 
 RUN npm ci

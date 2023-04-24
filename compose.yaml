@@ -1,0 +1,10 @@
+services:
+  unclassified-photos:
+    build: .
+    image: unclassified-photos
+    container_name: unclassified-photos
+    ports:
+    - "443:${HTTPS_PORT}"
+    - "80:${HTTP_PORT}"
+    volumes:
+    - ./logs:/app/logs
