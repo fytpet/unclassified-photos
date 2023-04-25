@@ -1,15 +1,14 @@
 name: Docker Image CI
 
 on:
+  push:
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
@@ -17,3 +16,12 @@ jobs:
       env:
         HTTP_PORT: 80
         HTTPS_PORT: 443
+    - name: Log in to Docker Hub
+      if: github.ref == 'refs/heads/master'
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Push to Docker Hub
+      needs: [Log in to Docker Hub]
+      run: docker image push fytpet/unclassified-photos

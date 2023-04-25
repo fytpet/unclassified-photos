@@ -1,7 +1,7 @@
 services:
   unclassified-photos:
     build: .
-    image: unclassified-photos
+    image: fytpet/unclassified-photos
     container_name: unclassified-photos
     restart: unless-stopped
     ports:
