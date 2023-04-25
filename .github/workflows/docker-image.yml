@@ -17,7 +17,6 @@ jobs:
         HTTP_PORT: 80
         HTTPS_PORT: 443
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
     - name: Log in to Docker Hub
