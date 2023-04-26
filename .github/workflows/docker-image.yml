@@ -15,6 +15,8 @@ jobs:
       run: echo "$ENV_FILE_CONTENTS" > .env
       env:
         ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
+    - name: Create SSL directory
+      run: mkdir ssl
     - name: Write privkey.pem file
       run: echo "$SSL_PRIVATE_KEY" > ./ssl/privkey.pem
       env:
