@@ -12,9 +12,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Write .env file
+      run: echo "$ENV_FILE_CONTENTS" > .env
       env:
         ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
-      run: echo "$ENV_FILE_CONTENTS" > .env
+    - name: Write privkey.pem file
+      run: echo "$SSL_PRIVATE_KEY" > privkey.pem
+      env:
+        SSL_PRIVATE_KEY: ${{ secrets.SSL_PRIVATE_KEY }}
+    - name: Write fullchain.pem file
+      run: echo "$SSL_FULL_CHAIN" > fullchain.pem
+      env:
+        SSL_FULL_CHAIN: ${{ secrets.SSL_FULL_CHAIN }}
     - name: Build the Docker image
       run: docker compose build
       env:
