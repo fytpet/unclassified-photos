@@ -1,0 +1,16 @@
+name: Integration Pipeline
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker compose build
+      env:
+        HTTP_PORT: 80
+        HTTPS_PORT: 443
