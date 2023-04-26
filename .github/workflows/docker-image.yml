@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Write .env file
+        run: echo "$ENV_FILE_CONTENTS" > .env
     - name: Build the Docker image
       run: docker compose build
       env:
