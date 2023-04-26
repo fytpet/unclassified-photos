@@ -12,6 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Write .env file
+      env:
+        ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
       run: echo "$ENV_FILE_CONTENTS" > .env
     - name: Build the Docker image
       run: docker compose build
