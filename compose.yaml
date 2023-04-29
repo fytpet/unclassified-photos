@@ -9,3 +9,4 @@ services:
     - "80:${HTTP_PORT}"
     volumes:
     - ./logs:/app/logs
+    - ./ssl:/app/ssl

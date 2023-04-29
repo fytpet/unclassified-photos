@@ -11,26 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Write .env file
-      run: echo "$ENV_FILE_CONTENTS" > .env
-      env:
-        ENV_FILE_CONTENTS: ${{ secrets.ENV_FILE_CONTENTS }}
-    - name: Create SSL directory
-      run: mkdir ssl
-    - name: Write privkey.pem file
-      run: echo "$SSL_PRIVATE_KEY" > ./ssl/privkey.pem
-      env:
-        SSL_PRIVATE_KEY: ${{ secrets.SSL_PRIVATE_KEY }}
-    - name: Write fullchain.pem file
-      run: echo "$SSL_FULL_CHAIN" > ./ssl/fullchain.pem
-      env:
-        SSL_FULL_CHAIN: ${{ secrets.SSL_FULL_CHAIN }}
     - name: Build the Docker image
-      run: docker compose build
+      run: docker build -t "$DOCKER_REPOSITORY" .
+      env:
+        DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
     - name: Log in to Docker Hub
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Push to Docker Hub
-      run: docker compose push
+      run: docker image push "$DOCKER_REPOSITORY"
+      env:
+        DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
