@@ -1,7 +1,7 @@
 services:
   unclassified-photos:
     build: .
-    image: unclassified-photos
+    image: fytpet/unclassified-photos
     container_name: unclassified-photos
     restart: unless-stopped
     ports:
@@ -9,3 +9,4 @@ services:
     - "80:${HTTP_PORT}"
     volumes:
     - ./logs:/app/logs
+    - ./ssl:/app/ssl
