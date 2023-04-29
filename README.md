@@ -1,4 +1,4 @@
-[![Docker Image CI](https://github.com/fytpet/unclassified-photos/actions/workflows/docker-image.yml/badge.svg)](https://github.com/fytpet/unclassified-photos/actions/workflows/docker-image.yml)
+[![Deployment Pipeline](https://github.com/fytpet/unclassified-photos/actions/workflows/deployment.yml/badge.svg)](https://github.com/fytpet/unclassified-photos/actions/workflows/deployment.yml)
 
 # unclassified-photos
 Finds your Google Photos media items that are not in any of your albums.
