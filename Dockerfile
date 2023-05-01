@@ -1,4 +1,4 @@
-FROM node:18.16-bullseye-slim
+FROM node:18.16-alpine
 
 VOLUME /app/logs
 VOLUME /app/ssl
