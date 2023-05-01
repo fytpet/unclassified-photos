@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosResponse } from "axios";
 import winston from "winston";
-import { LoggingStorage } from "./AsyncLocalStorage";
+import { loggingStorage } from "./loggingStorage";
 
 export class Logger {
   private static logger = winston.createLogger({
@@ -60,7 +60,7 @@ export class Logger {
     const timestamp = new Date().toISOString();
     const condensedMessage = message.replace(/ {2}|\r\n|\n|\r/gm, " ");
 
-    const loggingStore = LoggingStorage.getStore();
+    const loggingStore = loggingStorage.getStore();
     const sessionId = loggingStore?.sessionId ?? "--------------------------------";
     const requestId = loggingStore?.requestId ?? "------------------------------------";
 

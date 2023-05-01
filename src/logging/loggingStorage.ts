@@ -5,4 +5,4 @@ interface LoggingStore {
   sessionId?: string;
 }
 
-export const LoggingStorage = new AsyncLocalStorage<LoggingStore>();
+export const loggingStorage = new AsyncLocalStorage<LoggingStore>();
