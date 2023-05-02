@@ -10,8 +10,14 @@ jobs:
     environment: production
     steps:
     - uses: actions/checkout@v3
+    - name: Set up Docker Buildx
+      uses: uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
+      with:
+        platforms: 'arm64'
     - name: Build the Docker image
-      run: docker build -t "$DOCKER_REPOSITORY" .
+      run: docker build -t "$DOCKER_REPOSITORY" --platform linux/arm64/v7 .
       env:
         DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
     - name: Log in to Docker Hub
