@@ -17,9 +17,9 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18
       with:
-        platforms: 'arm64'
+        platforms: 'arm'
     - name: Build the Docker image
-      run: docker build -t "$DOCKER_REPOSITORY" --platform linux/arm64/v7 .
+      run: docker build -t "$DOCKER_REPOSITORY" --platform linux/arm/v7 .
       env:
         DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
     - name: Log in to Docker Hub
