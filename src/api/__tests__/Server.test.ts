@@ -1,13 +1,13 @@
 jest.mock("../../logging/Logger");
-
 import { createAccessTokenMock, SOME_ACCESS_TOKEN, SOME_REDIRECT_CODE } from "./OAuthProviderClientMock";
+
 import type { AxiosResponse } from "axios";
-import { Server } from "../Server";
 import axios from "axios";
 import {
-  AUTHENTICATION_ERR_MSG, signInErrMsg, EXPIRED_SESSION_ERR_MSG, GENERIC_ERR_MSG
+  AUTHENTICATION_ERR_MSG, EXPIRED_SESSION_ERR_MSG, GENERIC_ERR_MSG, signInErrMsg
 } from "../../exceptions/errorMessages";
 import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
+import { Server } from "../Server";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";

@@ -3,8 +3,7 @@ declare global {
     interface ProcessEnv {
       NODE_ENV: "development" | "production";
       BASE_URI: string;
-      HTTP_PORT: string;
-      HTTPS_PORT: string;
+      PORT: string;
       GOOGLE_CLIENT_ID: string;
       GOOGLE_CLIENT_SECRET: string;
       SESSION_SECRET: string;
@@ -12,4 +11,5 @@ declare global {
   }
 }
 
-export {};
+export { };
+

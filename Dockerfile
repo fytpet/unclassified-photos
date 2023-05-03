@@ -1,7 +1,6 @@
 FROM node:18.16-bullseye-slim
 
 VOLUME /app/logs
-VOLUME /app/ssl
 
 WORKDIR /app
 

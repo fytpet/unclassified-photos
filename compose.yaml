@@ -7,11 +7,9 @@ services:
     depends_on:
     - redis
     ports:
-    - "443:${HTTPS_PORT}"
-    - "80:${HTTP_PORT}"
+    - "${PORT}:${PORT}"
     volumes:
     - ./logs:/app/logs
-    - ./ssl:/app/ssl
     env_file:
     - .env
   redis:
