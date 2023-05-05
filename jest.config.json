@@ -2,5 +2,6 @@
   "preset": "ts-jest",
   "testEnvironment": "node",
   "globalSetup": "./src/tests/setupProcessEnv.ts",
+  "setupFilesAfterEnv": ["./src/tests/setupTests.ts"],
   "testMatch": ["**/__tests__/**/*.test.ts"]
 }
