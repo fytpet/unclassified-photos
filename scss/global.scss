@@ -1,0 +1,55 @@
+$primary: #0054A8;
+
+@import "../node_modules/bulma/sass/utilities/_all.sass";
+
+@import "../node_modules/bulma/sass/base/minireset.sass";
+@import "../node_modules/bulma/sass/base/generic.sass";
+@import "../node_modules/bulma/sass/base/animations.sass";
+
+@import "../node_modules/bulma/sass/helpers/visibility.sass";
+@import "../node_modules/bulma/sass/helpers/color.sass";
+@import "../node_modules/bulma/sass/helpers/spacing.sass";
+@import "../node_modules/bulma/sass/helpers/typography.sass";
+@import "../node_modules/bulma/sass/helpers/flexbox.sass";
+
+@import "../node_modules/bulma/sass/layout/section.sass";
+
+@import "../node_modules/bulma/sass/elements/icon.sass";
+@import "../node_modules/bulma/sass/elements/button.sass";
+@import "../node_modules/bulma/sass/elements/notification.sass";
+
+@import "../node_modules/bulma/sass/components/breadcrumb.sass";
+
+html {
+  overflow-y: auto;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.photos-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  &__photo {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+    margin: 5px;
+  }
+}
+
+.btn-google:active {
+  background: url("google/btn_google_signin_dark_pressed_web@2x.png");
+  background-size: contain;
+}
+
+a:focus > .btn-google {
+  background: url("google/btn_google_signin_dark_focus_web@2x.png");
+  background-size: contain;
+}
