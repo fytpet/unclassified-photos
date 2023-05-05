@@ -28,14 +28,15 @@ router.post("/sign-out", (req, res) => {
 });
 
 router.post("/", (req, res, next) => {
-  const { accessToken } = req.session;
-
-  if (!accessToken) {
+  if (!req.session.accessToken) {
     throw new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
   }
 
   refreshTokenIfNeeded(req)
-    .then(() => new PhotosService(accessToken).findUnclassifiedPhotos())
+    .then(() => {
+      if (!req.session.accessToken) throw new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
+      return new PhotosService(req.session.accessToken).findUnclassifiedPhotos();
+    })
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });
@@ -48,9 +49,9 @@ async function refreshTokenIfNeeded(req: Request): Promise<void> {
   const { expiresAtMs, refreshToken } = req.session;
 
   if (!refreshToken) {
-    Logger.error("Could not refresh token: refreshToken undefined");
+    Logger.error("refreshToken undefined");
   } else if (!expiresAtMs) {
-    Logger.error("Could not refresh token: expiresAtMs undefined");
+    Logger.error("expiresAtMs undefined");
   } else if (Date.now() > expiresAtMs) {
     Logger.debug(`Refreshing access token: ${Date.now()} (Date.now()) > ${expiresAtMs} (expiresAtMs)`);
     const response = await new OAuthProviderClient().refreshAccessToken(refreshToken);
