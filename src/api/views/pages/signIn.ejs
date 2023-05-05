@@ -3,7 +3,9 @@
   </nav>
   <section class="section">
     <% if (error) { %>
-      <div class="notification is-danger"><%= error %></div>
+      <div class="notification is-danger">
+        <%= error %>
+      </div>
     <% } %>
     <p class="is-size-5 pb-5">
       Search your Google Photos Library for any photos that are not in any album.
@@ -15,9 +17,9 @@
       <img
         class="btn-google"
         src="google/btn_google_signin_dark_normal_web@2x.png"
-        alt="Sign in with Google"
         width="191"
         height="46"
+        alt="Sign in with Google"
       />
     </a>
   </section>
