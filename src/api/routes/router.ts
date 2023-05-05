@@ -19,7 +19,7 @@ router.get("/sign-in", (req, res) => {
   res.render("pages/signIn", { error: popError(req) });
 });
 
-router.get("/sign-out", (req, res) => {
+router.post("/sign-out", (req, res) => {
   req.session.destroy((err) => {
     if (err) Logger.error(err);
     res.redirect("/sign-in");

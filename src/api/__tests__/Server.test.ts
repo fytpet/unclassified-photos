@@ -135,8 +135,8 @@ describe("given authenticated session", () => {
 describe("given session", () => {
   givenUnauthenticatedSession();
 
-  describe("when navigating to sign-out route", () => {
-    whenNavigatingTo(SIGN_OUT_ROUTE);
+  describe("when submitting to sign-out route", () => {
+    whenSubmittingTo(SIGN_OUT_ROUTE);
 
     test("then session is destroyed", () => expect(destroySession).toHaveBeenCalledTimes(1));
     test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
