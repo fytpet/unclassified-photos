@@ -2,37 +2,39 @@
       <%- include('../partials/signOut') %>
     </div>
   </nav>
-  <section class="section">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <a href="/">Home</a>
-        </li>
-        <li class="is-active">
-          <a href="/results" aria-current="page">
-            Results
+  <main>
+    <section class="section">
+      <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li class="is-active">
+            <a href="/results" aria-current="page">
+              Results
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <p class="is-size-5 pb-5">
+        You have <%= photos.length %> unclassified photos.
+      </p>
+      <div class="photos-grid">
+        <% for (const photo of photos) { %>
+          <a href="<%= photo.productUrl %>" target="_blank">
+            <img
+              class="photos-grid__photo"
+              src="<%= photo.baseUrl %>"
+              referrerpolicy="no-referrer"
+              width="200"
+              height="200"
+              alt="<%= photo.filename %>"
+            />
           </a>
-        </li>
-      </ul>
-    </nav>
-    <p class="is-size-5 pb-5">
-      You have <%= photos.length %> unclassified photos.
-    </p>
-    <div class="photos-grid">
-      <% for (const photo of photos) { %>
-        <a href="<%= photo.productUrl %>" target="_blank">
-          <img
-            class="photos-grid__photo"
-            src="<%= photo.baseUrl %>"
-            referrerpolicy="no-referrer"
-            width="200"
-            height="200"
-            alt="<%= photo.filename %>"
-          />
-        </a>
-      <% } %>
-    </div>
-  </section>
+        <% } %>
+      </div>
+    </section>
+  </main>
 </body>
 
 </html>
