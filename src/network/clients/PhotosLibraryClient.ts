@@ -9,8 +9,8 @@ export const SEARCH_PAGE_SIZE = 100;
 export class PhotosLibraryClient {
   private readonly apiClient: ApiClient;
 
-  constructor(bearer: string) {
-    this.apiClient = new ApiClient(bearer);
+  constructor(accessToken: string) {
+    this.apiClient = new ApiClient(accessToken);
   }
 
   fetchPhotos = async (params: PhotosLibrarySearchParams) => {

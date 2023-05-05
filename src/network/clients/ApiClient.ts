@@ -9,12 +9,12 @@ const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 export class ApiClient {
   private readonly axios: AxiosInstance;
 
-  constructor(bearer?: string) {
+  constructor(accessToken?: string) {
     this.axios = axios.create({
       baseURL: PHOTOS_LIBRARY_BASE_URL,
       headers: {
         common: {
-          "Authorization" : bearer && `Bearer ${bearer}`,
+          "Authorization" : accessToken && `Bearer ${accessToken}`,
           "Content-Type": "application/json"
         }
       },

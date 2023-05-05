@@ -43,7 +43,9 @@ function givenAuthenticatedSession() {
 
 async function givenSession() {
   createAccessTokenMock.mockImplementation(
-    (code: string) => Promise.resolve(code === SOME_REDIRECT_CODE ? SOME_ACCESS_TOKEN : undefined)
+    (code: string) => Promise.resolve({
+      accessToken: code === SOME_REDIRECT_CODE ? SOME_ACCESS_TOKEN : undefined
+    })
   );
 
   server = new Server((req, res, next) => {
@@ -198,6 +200,7 @@ function expectedOAuthProviderUrl() {
   params.append("redirect_uri", "http://localhost:3000/oauth/redirect");
   params.append("response_type", "code");
   params.append("scope", "https://www.googleapis.com/auth/photoslibrary.readonly");
+  params.append("access_type", "offline");
   params.append("prompt", "select_account");
   return `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
 }

@@ -1,4 +1,4 @@
-import type { AccessTokenResponse } from "../../types/types";
+import type { AccessTokenResponse, RefreshTokenResponse } from "../../types/types";
 import { ApiClient } from "./ApiClient";
 
 export const OAUTH_PROVIDER_BASE_URL = "https://accounts.google.com/o/oauth2";
@@ -26,6 +26,29 @@ export class OAuthProviderClient {
       { baseURL: OAUTH_PROVIDER_BASE_URL }
     );
   
-    return response.data.access_token;
+    return {
+      accessToken: response.data.access_token,
+      expiresAtMs: Date.now() + response.data.expires_in * 1000,
+      refreshToken: response.data.refresh_token,
+    };
+  }
+
+  async refreshAccessToken(refreshToken: string) {
+    const params = new URLSearchParams();
+    params.append("client_id", process.env.GOOGLE_CLIENT_ID);
+    params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
+    params.append("refresh_token", refreshToken);
+    params.append("grant_type", GRANT_TYPE);
+
+    const response = await this.apiClient.post<RefreshTokenResponse>(
+      "/token",
+      params.toString(),
+      { baseURL: OAUTH_PROVIDER_BASE_URL }
+    );
+
+    return {
+      accessToken: response.data.access_token,
+      expiresAtMs: Date.now() + response.data.expires_in * 1000,
+    };
   }
 }
