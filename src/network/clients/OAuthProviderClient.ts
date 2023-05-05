@@ -3,7 +3,8 @@ import { ApiClient } from "./ApiClient";
 
 export const OAUTH_PROVIDER_BASE_URL = "https://accounts.google.com/o/oauth2";
 export const REDIRECT_URI = `${process.env.BASE_URI}/oauth/redirect`;
-const GRANT_TYPE = "authorization_code";
+const AUTH_CODE_GRANT_TYPE = "authorization_code";
+const REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
 
 export class OAuthProviderClient {
   private readonly apiClient: ApiClient;
@@ -18,7 +19,7 @@ export class OAuthProviderClient {
     params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
     params.append("code", authCode);
     params.append("redirect_uri", REDIRECT_URI);
-    params.append("grant_type", GRANT_TYPE);
+    params.append("grant_type", AUTH_CODE_GRANT_TYPE);
 
     const response = await this.apiClient.post<AccessTokenResponse>(
       "/token",
@@ -38,7 +39,7 @@ export class OAuthProviderClient {
     params.append("client_id", process.env.GOOGLE_CLIENT_ID);
     params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
     params.append("refresh_token", refreshToken);
-    params.append("grant_type", GRANT_TYPE);
+    params.append("grant_type", REFRESH_TOKEN_GRANT_TYPE);
 
     const response = await this.apiClient.post<RefreshTokenResponse>(
       "/token",

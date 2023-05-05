@@ -28,31 +28,14 @@ router.post("/sign-out", (req, res) => {
 });
 
 router.post("/", (req, res, next) => {
-  const { accessToken, expiresAtMs, refreshToken } = req.session;
+  const { accessToken } = req.session;
 
   if (!accessToken) {
     throw new UserFriendlyError(EXPIRED_SESSION_ERR_MSG);
   }
 
-  if (!refreshToken) {
-    Logger.error("refreshToken undefined");
-  } else if (!expiresAtMs) {
-    Logger.error("expiresAtMs undefined");
-  } else if (Date.now() > expiresAtMs) {
-    Logger.debug(`Refreshing access token: ${Date.now()} (Date.now()) > ${expiresAtMs} (expiresAtMs)`);
-    new OAuthProviderClient()
-      .refreshAccessToken(refreshToken)
-      .then(({ accessToken, expiresAtMs }) => {
-        req.session.accessToken = accessToken;
-        req.session.expiresAtMs = expiresAtMs;
-      })
-      .catch((err) => next(err));
-  } else {
-    Logger.debug("Access token has yet to expire");
-  }
-
-  new PhotosService(accessToken)
-    .findUnclassifiedPhotos()
+  refreshTokenIfNeeded(req)
+    .then(() => new PhotosService(accessToken).findUnclassifiedPhotos())
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
 });
@@ -60,6 +43,23 @@ router.post("/", (req, res, next) => {
 router.get("*", (_, res) => {
   res.redirect("/");
 });
+
+async function refreshTokenIfNeeded(req: Request): Promise<void> {
+  const { expiresAtMs, refreshToken } = req.session;
+
+  if (!refreshToken) {
+    Logger.error("Could not refresh token: refreshToken undefined");
+  } else if (!expiresAtMs) {
+    Logger.error("Could not refresh token: expiresAtMs undefined");
+  } else if (Date.now() > expiresAtMs) {
+    Logger.debug(`Refreshing access token: ${Date.now()} (Date.now()) > ${expiresAtMs} (expiresAtMs)`);
+    const response = await new OAuthProviderClient().refreshAccessToken(refreshToken);
+    req.session.accessToken = response.accessToken;
+    req.session.expiresAtMs = response.expiresAtMs;
+  } else {
+    Logger.debug("Access token has yet to expire");
+  }
+}
 
 function isAuthenticated(req: Request): boolean {
   return !!req.session.accessToken;
