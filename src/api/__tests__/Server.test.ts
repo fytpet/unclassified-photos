@@ -1,4 +1,3 @@
-jest.mock("../../logging/Logger");
 import { createAccessTokenMock, SOME_ACCESS_TOKEN, SOME_REDIRECT_CODE } from "./OAuthProviderClientMock";
 
 import type { AxiosResponse } from "axios";
@@ -77,7 +76,6 @@ function thenRenders(expected: string) {
 
 afterEach(() => {
   delete axios.defaults.headers["Cookie"];
-  jest.clearAllMocks();
   server.close();
 });
 
