@@ -24,8 +24,8 @@ const UNKNOWN_ROUTE = `${HOME_ROUTE}/unknown`;
 
 let server: Server;
 let response: AxiosResponse;
-const destroySession = jest.fn();
-const regenerateSession = jest.fn();
+const destroySession = jest.fn().mockImplementation((callback: () => void) => callback());
+const regenerateSession = jest.fn().mockImplementation((callback: () => void) => callback());
 let redirect: jest.SpyInstance = jest.fn();
 
 function givenUnauthenticatedSession() {
@@ -54,8 +54,8 @@ function givenExpiredSession() {
 
 async function givenSession() {
   server = new Server((req, res, next) => {
-    req.session.destroy = destroySession.mockImplementation((callback: () => void) => callback());
-    req.session.regenerate = regenerateSession.mockImplementation((callback: () => void) => callback());
+    req.session.destroy = destroySession;
+    req.session.regenerate = regenerateSession;
     redirect = jest.spyOn(res, "redirect");
     next();
   });

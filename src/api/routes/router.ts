@@ -49,11 +49,11 @@ async function refreshTokenIfNeeded(req: Request): Promise<void> {
   const { expiresAtMs, refreshToken } = req.session;
 
   if (!refreshToken) {
-    Logger.error("refreshToken undefined");
+    Logger.error("Missing refresh token in session data");
   } else if (!expiresAtMs) {
-    Logger.error("expiresAtMs undefined");
+    Logger.error("Missing token expiration timestamp in session data");
   } else if (Date.now() > expiresAtMs) {
-    Logger.debug(`Refreshing access token: ${Date.now()} (Date.now()) > ${expiresAtMs} (expiresAtMs)`);
+    Logger.debug(`Refreshing access token: ${new Date().toISOString()} > ${new Date(expiresAtMs).toISOString()}`);
     const response = await new OAuthProviderClient().refreshAccessToken(refreshToken);
     req.session.accessToken = response.accessToken;
     req.session.expiresAtMs = response.expiresAtMs;
