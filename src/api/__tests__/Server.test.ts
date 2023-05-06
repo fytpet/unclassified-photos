@@ -213,6 +213,6 @@ function expectedOAuthProviderUrl() {
   params.append("response_type", "code");
   params.append("scope", "https://www.googleapis.com/auth/photoslibrary.readonly");
   params.append("access_type", "offline");
-  params.append("prompt", "select_account");
+  params.append("prompt", "consent select_account");
   return `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
 }
