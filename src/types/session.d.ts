@@ -1,6 +1,8 @@
 declare module "express-session" {
   interface SessionData {
-    bearer?: string;
+    accessToken?: string;
+    expiresAtMs?: number;
+    refreshToken?: string;
     error?: string;
   }
 }

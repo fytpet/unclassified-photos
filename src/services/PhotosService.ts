@@ -8,8 +8,8 @@ const MAXIMUM_UNCLASSIFIED_PHOTOS_COUNT = 100;
 export class PhotosService {
   private readonly photosLibraryClient;
 
-  constructor(bearer: string) {
-    this.photosLibraryClient = new PhotosLibraryClient(bearer);
+  constructor(accessToken: string) {
+    this.photosLibraryClient = new PhotosLibraryClient(accessToken);
   }
 
   async findUnclassifiedPhotos() {

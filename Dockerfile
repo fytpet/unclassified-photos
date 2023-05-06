@@ -13,8 +13,6 @@ COPY package.json .
 COPY tsconfig.json .
 
 RUN npm ci
-RUN npm run typecheck
-RUN npm run lint
-RUN npm run test
+RUN npm run validate
 
 CMD ["node", "-r", "ts-node/register/transpile-only", "./src/app.ts"]

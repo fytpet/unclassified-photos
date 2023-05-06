@@ -39,4 +39,11 @@ interface MediaMetadata {
 
 export interface AccessTokenResponse {
   access_token: string;
+  expires_in: number;
+  refresh_token: string;
+}
+
+export interface RefreshTokenResponse {
+  access_token: string;
+  expires_in: number;
 }

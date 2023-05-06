@@ -1,5 +1,5 @@
 jest.mock("../ApiClient", () => ({
-  ApiClient: jest.fn().mockImplementation(() => ({
+  ApiClient: jest.fn(() => ({
     get: () => ({ data: {} }),
     post: () => ({ data: {} })
   })),
