@@ -15,7 +15,7 @@ oauthRouter.get("/", (_, res) => {
   params.append("response_type", "code");
   params.append("scope", PHOTOS_LIBRARY_READONLY_SCOPE);
   params.append("access_type", "offline");
-  params.append("prompt", "select_account");
+  params.append("prompt", "consent select_account");
 
   res.redirect(`${OAUTH_PROVIDER_BASE_URL}/auth?${params.toString()}`);
 });
