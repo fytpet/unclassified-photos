@@ -1,13 +1,13 @@
-import { givenAccessTokenCreationFailure } from "./OAuthProviderClientStub";
+import { givenAccessTokenCreationFailure } from "./OAuthProviderClientStub.js";
 import "./PhotosServiceStub";
 
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 import {
   AUTHENTICATION_ERR_MSG, EXPIRED_SESSION_ERR_MSG, signInErrMsg
-} from "../../exceptions/errorMessages";
-import { Server } from "../Server";
-import { photoFixture, SOME_ERROR_MESSAGE, SOME_REDIRECT_CODE } from "./constants";
+} from "../../exceptions/errorMessages.js";
+import { Server } from "../Server.js";
+import { photoFixture, SOME_ERROR_MESSAGE, SOME_REDIRECT_CODE } from "./constants.js";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";

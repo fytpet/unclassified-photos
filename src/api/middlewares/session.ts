@@ -1,6 +1,6 @@
 import RedisStore from "connect-redis";
 import expressSession from "express-session";
-import { redisClient } from "../redisClient";
+import { redisClient } from "../redisClient.js";
 
 const ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 

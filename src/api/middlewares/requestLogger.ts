@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { Logger } from "../../logging/Logger";
+import { Logger } from "../../logging/Logger.js";
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   res.on("finish", () => {

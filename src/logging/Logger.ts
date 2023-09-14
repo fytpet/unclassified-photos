@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosResponse } from "axios";
 import winston from "winston";
-import { loggingStorage } from "./loggingStorage";
+import { loggingStorage } from "./loggingStorage.js";
 
 export class Logger {
   private static logger = winston.createLogger({

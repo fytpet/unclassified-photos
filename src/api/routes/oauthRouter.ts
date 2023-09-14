@@ -1,8 +1,11 @@
 import express from "express";
-import { AUTHENTICATION_ERR_MSG, signInErrMsg } from "../../exceptions/errorMessages";
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
-import { Logger } from "../../logging/Logger";
-import { OAuthProviderClient, OAUTH_PROVIDER_BASE_URL, REDIRECT_URI } from "../../network/clients/OAuthProviderClient";
+import { AUTHENTICATION_ERR_MSG, signInErrMsg } from "../../exceptions/errorMessages.js";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
+import { Logger } from "../../logging/Logger.js";
+import {
+  OAuthProviderClient,
+  OAUTH_PROVIDER_BASE_URL, REDIRECT_URI
+} from "../../network/clients/OAuthProviderClient.js";
 
 const PHOTOS_LIBRARY_READONLY_SCOPE = "https://www.googleapis.com/auth/photoslibrary.readonly";
 

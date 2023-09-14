@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
 import {
   SOME_ACCESS_TOKEN,
   SOME_ERROR_MESSAGE,
@@ -7,7 +7,7 @@ import {
   SOME_OTHER_TOKEN_EXPIRATION,
   SOME_REDIRECT_CODE,
   SOME_TOKEN_EXPIRATION
-} from "./constants";
+} from "./constants.js";
 
 const SOME_REFRESH_TOKEN = "k1ns2n1s81ns";
 

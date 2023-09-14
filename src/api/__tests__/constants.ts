@@ -1,4 +1,4 @@
-import type { Photo } from "../../types/types";
+import type { Photo } from "../../types/types.js";
 
 export const SOME_REDIRECT_CODE = "j2nsfd91h1";
 export const SOME_ACCESS_TOKEN = "91md71h2bs8aa22f";

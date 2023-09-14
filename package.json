@@ -4,8 +4,9 @@
   "description": "Finds your Google Photos media items that are not in any of your albums.",
   "author": "Petros Fytilis",
   "main": "./src/app.ts",
+  "type": "module",
   "scripts": {
-    "start": "ts-node ./src/app.ts",
+    "start": "ts-node --esm ./src/app.ts",
     "sass": "node-sass sass/global.scss public/global.css --output-style compressed",
     "test": "jest",
     "typecheck": "tsc --noEmit",

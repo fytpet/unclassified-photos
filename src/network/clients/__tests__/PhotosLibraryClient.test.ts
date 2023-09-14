@@ -5,8 +5,8 @@ jest.mock("../ApiClient", () => ({
   })),
 }));
 
-import type { Album } from "../../../types/types";
-import { PhotosLibraryClient } from "../PhotosLibraryClient";
+import type { Album } from "../../../types/types.js";
+import { PhotosLibraryClient } from "../PhotosLibraryClient.js";
 
 const SOME_BEARER_TOKEN = "98123713afa113";
 

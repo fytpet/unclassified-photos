@@ -1,5 +1,5 @@
-import type { AccessTokenResponse, RefreshTokenResponse } from "../../types/types";
-import { ApiClient } from "./ApiClient";
+import type { AccessTokenResponse, RefreshTokenResponse } from "../../types/types.js";
+import { ApiClient } from "./ApiClient.js";
 
 export const OAUTH_PROVIDER_BASE_URL = "https://accounts.google.com/o/oauth2";
 export const REDIRECT_URI = `${process.env.BASE_URI}/oauth/redirect`;

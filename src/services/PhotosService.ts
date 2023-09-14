@@ -1,7 +1,7 @@
-import { Logger } from "../logging/Logger";
-import { PhotosLibraryClient } from "../network/clients/PhotosLibraryClient";
-import { PhotosCursor } from "../network/cursors/PhotosCursor";
-import type { Photo } from "../types/types";
+import { Logger } from "../logging/Logger.js";
+import { PhotosLibraryClient } from "../network/clients/PhotosLibraryClient.js";
+import { PhotosCursor } from "../network/cursors/PhotosCursor.js";
+import type { Photo } from "../types/types.js";
 
 const MAXIMUM_UNCLASSIFIED_PHOTOS_COUNT = 100;
 
