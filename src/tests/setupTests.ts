@@ -1,5 +1,5 @@
-jest.mock("../logging/Logger");
+vi.mock("../logging/Logger");
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });

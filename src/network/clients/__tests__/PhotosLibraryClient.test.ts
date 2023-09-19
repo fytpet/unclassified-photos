@@ -1,5 +1,5 @@
-jest.mock("../ApiClient", () => ({
-  ApiClient: jest.fn(() => ({
+vi.mock("../ApiClient", () => ({
+  ApiClient: vi.fn(() => ({
     get: () => ({ data: {} }),
     post: () => ({ data: {} })
   })),

@@ -1,8 +1,6 @@
 import type { RequestHandler } from "express";
 import express from "express";
 import type { Server as HttpServer } from "http";
-import path from "path";
-import { fileURLToPath } from "url";
 import { Logger } from "../logging/Logger.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { helmetHandler } from "./middlewares/helmetHandler.js";
@@ -17,7 +15,7 @@ export class Server {
   private server: HttpServer | undefined;
 
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
-    this.app.set("views", path.join(fileURLToPath(import.meta.url), "../views"));
+    this.app.set("views", "src/api/views");
     this.app.set("view engine", "ejs");
     this.app.disable("x-powered-by");
     this.app.use(helmetHandler);

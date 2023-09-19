@@ -26,6 +26,6 @@ class PhotosServiceStub {
   }
 }
 
-jest.mock("../../services/PhotosService", () => ({
+vi.mock("../../services/PhotosService", () => ({
   PhotosService: PhotosServiceStub
 }));
