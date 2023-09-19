@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { GENERIC_ERR_MSG } from "../../exceptions/errorMessages";
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
-import { Logger } from "../../logging/Logger";
+import { GENERIC_ERR_MSG } from "../../exceptions/errorMessages.js";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
+import { Logger } from "../../logging/Logger.js";
 
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   Logger.error(err);

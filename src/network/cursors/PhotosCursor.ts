@@ -1,8 +1,8 @@
-import type { Photo } from "../../types/types";
-import type { PhotosLibraryClient} from "../clients/PhotosLibraryClient";
-import { SEARCH_PAGE_SIZE } from "../clients/PhotosLibraryClient";
-import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams";
-import { PhotosLibraryCursor } from "./PhotosLibraryCursor";
+import type { Photo } from "../../types/types.js";
+import type { PhotosLibraryClient} from "../clients/PhotosLibraryClient.js";
+import { SEARCH_PAGE_SIZE } from "../clients/PhotosLibraryClient.js";
+import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams.js";
+import { PhotosLibraryCursor } from "./PhotosLibraryCursor.js";
 
 export class PhotosCursor extends PhotosLibraryCursor<Photo> {
   constructor(client: PhotosLibraryClient) {

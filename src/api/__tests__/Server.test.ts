@@ -1,13 +1,14 @@
-import { givenAccessTokenCreationFailure } from "./OAuthProviderClientStub";
+import { givenAccessTokenCreationFailure } from "./OAuthProviderClientStub.js";
 import "./PhotosServiceStub";
 
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 import {
   AUTHENTICATION_ERR_MSG, EXPIRED_SESSION_ERR_MSG, signInErrMsg
-} from "../../exceptions/errorMessages";
-import { Server } from "../Server";
-import { photoFixture, SOME_ERROR_MESSAGE, SOME_REDIRECT_CODE } from "./constants";
+} from "../../exceptions/errorMessages.js";
+import { Server } from "../Server.js";
+import { photoFixture, SOME_ERROR_MESSAGE, SOME_REDIRECT_CODE } from "./constants.js";
+import type { SpyInstance } from "vitest";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";
@@ -24,9 +25,9 @@ const UNKNOWN_ROUTE = `${HOME_ROUTE}/unknown`;
 
 let server: Server;
 let response: AxiosResponse;
-const destroySession = jest.fn().mockImplementation((callback: () => void) => callback());
-const regenerateSession = jest.fn().mockImplementation((callback: () => void) => callback());
-let redirect: jest.SpyInstance = jest.fn();
+const destroySession = vi.fn().mockImplementation((callback: () => void) => callback());
+const regenerateSession = vi.fn().mockImplementation((callback: () => void) => callback());
+let redirect: SpyInstance = vi.fn();
 
 function givenUnauthenticatedSession() {
   beforeEach(async () => {
@@ -36,8 +37,8 @@ function givenUnauthenticatedSession() {
 
 function givenAuthenticatedSession() {
   beforeEach(async () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(2020, 1, 1));
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2020, 1, 1));
     await givenSession();
     response = await axios.get(REDIRECT_ROUTE_WITH_CODE);
   });
@@ -45,8 +46,8 @@ function givenAuthenticatedSession() {
 
 function givenExpiredSession() {
   beforeEach(async () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(2020, 1, 3));
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2020, 1, 3));
     await givenSession();
     response = await axios.get(REDIRECT_ROUTE_WITH_CODE);
   });
@@ -56,7 +57,7 @@ async function givenSession() {
   server = new Server((req, res, next) => {
     req.session.destroy = destroySession;
     req.session.regenerate = regenerateSession;
-    redirect = jest.spyOn(res, "redirect");
+    redirect = vi.spyOn(res, "redirect");
     next();
   });
   server.start();
@@ -66,11 +67,11 @@ async function givenSession() {
 }
 
 function whenNavigatingTo(route: string) {
-  beforeEach(async () => response = await axios.get(route));
+  beforeEach(async () => { response = await axios.get(route); });
 }
 
 function whenSubmittingTo(route: string) {
-  beforeEach(async () => response = await axios.post(route));
+  beforeEach(async () => { response = await axios.post(route); });
 }
 
 function thenRenders(expected: string) {
@@ -80,7 +81,7 @@ function thenRenders(expected: string) {
 afterEach(() => {
   delete axios.defaults.headers["Cookie"];
   server.close();
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe("given unauthenticated session", () => {

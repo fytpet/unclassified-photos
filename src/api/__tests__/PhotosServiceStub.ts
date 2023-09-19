@@ -1,4 +1,4 @@
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
 import {
   photoFixture,
   SOME_ACCESS_TOKEN,
@@ -6,7 +6,7 @@ import {
   SOME_OTHER_ACCESS_TOKEN,
   SOME_OTHER_TOKEN_EXPIRATION,
   SOME_TOKEN_EXPIRATION
-} from "./constants";
+} from "./constants.js";
 
 class PhotosServiceStub {
   private readonly accessToken;
@@ -26,6 +26,6 @@ class PhotosServiceStub {
   }
 }
 
-jest.mock("../../services/PhotosService", () => ({
+vi.mock("../../services/PhotosService", () => ({
   PhotosService: PhotosServiceStub
 }));

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
+import type { Mock } from "vitest";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
 import {
   SOME_ACCESS_TOKEN,
   SOME_ERROR_MESSAGE,
@@ -7,11 +7,11 @@ import {
   SOME_OTHER_TOKEN_EXPIRATION,
   SOME_REDIRECT_CODE,
   SOME_TOKEN_EXPIRATION
-} from "./constants";
+} from "./constants.js";
 
 const SOME_REFRESH_TOKEN = "k1ns2n1s81ns";
 
-const createAccessTokenStub = jest.fn((authCode: string) => {
+const createAccessTokenStub = vi.fn((authCode: string) => {
   if (authCode !== SOME_REDIRECT_CODE) {
     return Promise.reject();
   }
@@ -22,7 +22,7 @@ const createAccessTokenStub = jest.fn((authCode: string) => {
   });
 });
 
-const refreshAccessTokenStub = jest.fn((refreshToken: string) => {
+const refreshAccessTokenStub = vi.fn((refreshToken: string) => {
   if (refreshToken !== SOME_REFRESH_TOKEN) {
     return Promise.reject();
   }
@@ -32,9 +32,9 @@ const refreshAccessTokenStub = jest.fn((refreshToken: string) => {
   });
 });
 
-jest.mock("../../network/clients/OAuthProviderClient", () => ({
-  ...jest.requireActual("../../network/clients/OAuthProviderClient"),
-  OAuthProviderClient: jest.fn(() => ({
+vi.mock("../../network/clients/OAuthProviderClient", async (actual): Promise<{ OAuthProviderClient: Mock }> => ({
+  ...await actual(),
+  OAuthProviderClient: vi.fn(() => ({
     createAccessToken: createAccessTokenStub,
     refreshAccessToken: refreshAccessTokenStub
   }))

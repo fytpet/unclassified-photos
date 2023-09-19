@@ -1,10 +1,10 @@
 import type { Request } from "express";
 import express from "express";
-import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages";
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
-import { Logger } from "../../logging/Logger";
-import { OAuthProviderClient } from "../../network/clients/OAuthProviderClient";
-import { PhotosService } from "../../services/PhotosService";
+import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages.js";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
+import { Logger } from "../../logging/Logger.js";
+import { OAuthProviderClient } from "../../network/clients/OAuthProviderClient.js";
+import { PhotosService } from "../../services/PhotosService.js";
 
 export const router = express.Router();
 

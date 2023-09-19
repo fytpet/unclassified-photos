@@ -1,7 +1,7 @@
-import type { Album, AlbumsResponse, Photo, PhotosResponse } from "../../types/types";
-import { PhotosLibraryCursor } from "../cursors/PhotosLibraryCursor";
-import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams";
-import { ApiClient } from "./ApiClient";
+import type { Album, AlbumsResponse, Photo, PhotosResponse } from "../../types/types.js";
+import { PhotosLibraryCursor } from "../cursors/PhotosLibraryCursor.js";
+import { PhotosLibrarySearchParams } from "../utils/PhotosLibrarySearchParams.js";
+import { ApiClient } from "./ApiClient.js";
 
 const ALBUM_PAGE_SIZE = 50;
 export const SEARCH_PAGE_SIZE = 100;

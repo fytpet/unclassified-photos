@@ -1,12 +1,12 @@
-jest.mock("../ApiClient", () => ({
-  ApiClient: jest.fn(() => ({
+vi.mock("../ApiClient", () => ({
+  ApiClient: vi.fn(() => ({
     get: () => ({ data: {} }),
     post: () => ({ data: {} })
   })),
 }));
 
-import type { Album } from "../../../types/types";
-import { PhotosLibraryClient } from "../PhotosLibraryClient";
+import type { Album } from "../../../types/types.js";
+import { PhotosLibraryClient } from "../PhotosLibraryClient.js";
 
 const SOME_BEARER_TOKEN = "98123713afa113";
 

@@ -1,8 +1,8 @@
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import axios, { AxiosError } from "axios";
-import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages";
-import { UserFriendlyError } from "../../exceptions/UserFriendlyError";
-import { Logger } from "../../logging/Logger";
+import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages.js";
+import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
+import { Logger } from "../../logging/Logger.js";
 
 const PHOTOS_LIBRARY_BASE_URL = "https://photoslibrary.googleapis.com";
 

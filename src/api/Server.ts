@@ -1,22 +1,21 @@
 import type { RequestHandler } from "express";
 import express from "express";
 import type { Server as HttpServer } from "http";
-import path from "path";
-import { Logger } from "../logging/Logger";
-import { errorHandler } from "./middlewares/errorHandler";
-import { helmetHandler } from "./middlewares/helmetHandler";
-import { loggingStoreInitializer } from "./middlewares/loggingStoreInitializer";
-import { requestLogger } from "./middlewares/requestLogger";
-import { session } from "./middlewares/session";
-import { oauthRouter } from "./routes/oauthRouter";
-import { router } from "./routes/router";
+import { Logger } from "../logging/Logger.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import { helmetHandler } from "./middlewares/helmetHandler.js";
+import { loggingStoreInitializer } from "./middlewares/loggingStoreInitializer.js";
+import { requestLogger } from "./middlewares/requestLogger.js";
+import { session } from "./middlewares/session.js";
+import { oauthRouter } from "./routes/oauthRouter.js";
+import { router } from "./routes/router.js";
 
 export class Server {
   private app = express();
   private server: HttpServer | undefined;
 
   constructor(middleware: RequestHandler = (_, __, next) => next()) {
-    this.app.set("views", path.join(__dirname, "./views"));
+    this.app.set("views", "src/api/views");
     this.app.set("view engine", "ejs");
     this.app.disable("x-powered-by");
     this.app.use(helmetHandler);
