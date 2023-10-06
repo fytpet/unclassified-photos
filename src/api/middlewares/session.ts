@@ -10,8 +10,8 @@ export const session = expressSession({
   },
   name: "sessionId",
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
+  resave: process.env.NODE_ENV === "development",
+  saveUninitialized: process.env.NODE_ENV === "development",
   store: process.env.NODE_ENV === "production"
     ? new RedisStore({ client: redisClient })
     : undefined
