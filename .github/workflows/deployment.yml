@@ -29,3 +29,17 @@ jobs:
       run: docker image push "$DOCKER_REPOSITORY"
       env:
         DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
+    - name: Setup SSH
+      run: |
+        mkdir ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_private_key
+        ssh-keyscan -t rsa "$SSH_HOSTNAME" >> ~/.ssh/known_hosts
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
+    - name: Run deploy script over SSH
+      run: |
+        ssh -i ~/.ssh/ssh_private_key "$SSH_USERNAME@$SSH_HOSTNAME" "cd ~/deploy && ./deploy.sh"
+      env:
+        SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
