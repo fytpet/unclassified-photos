@@ -33,6 +33,7 @@ jobs:
       run: |
         mkdir ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_private_key
+        chmod 600 ~/.ssh/ssh_private_key
         ssh-keyscan -t rsa -p $SSH_PORT $SSH_HOSTNAME >> ~/.ssh/known_hosts
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
