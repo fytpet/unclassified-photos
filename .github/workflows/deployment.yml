@@ -46,3 +46,14 @@ jobs:
         SSH_PORT: ${{ secrets.SSH_PORT }}
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
+    - name: Check Server Health
+      run: |
+        response_code=$(curl -o /dev/null -s -w "%{http_code}" $HOSTNAME/health)
+        if [ "$response_code" == "200" ]; then
+          echo "Server is healthy (Status code: 200)"
+        else
+          echo "Server is not healthy (Status code: $response_code)"
+          exit 1
+        fi
+      env:
+        HOSTNAME: ${{ secrets.HOSTNAME }}
