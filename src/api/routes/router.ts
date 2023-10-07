@@ -5,6 +5,7 @@ import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
 import { Logger } from "../../logging/Logger.js";
 import { OAuthProviderClient } from "../../network/clients/OAuthProviderClient.js";
 import { PhotosService } from "../../services/PhotosService.js";
+import { redisClient } from "../redisClient.js";
 
 export const router = express.Router();
 
@@ -39,6 +40,27 @@ router.post("/", (req, res, next) => {
     })
     .then((photos) => res.render("pages/results", { photos }))
     .catch((err) => next(err));
+});
+
+router.get("/health", (_, res) => {
+  if (process.env.NODE_ENV === "development") {
+    res.status(200).send();
+    return;
+  }
+  redisClient
+    .ping()
+    .then((reply) => {
+      if (reply === "PONG") {
+        res.status(200).send();
+      } else {
+        Logger.error(`Redis ping replied with: ${reply}`);
+        res.status(503).send();
+      }
+    })
+    .catch(err => {
+      Logger.error(err);
+      res.status(503).send();
+    });
 });
 
 router.get("*", (_, res) => {
