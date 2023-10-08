@@ -28,5 +28,9 @@ services:
     - "80:80"
     - "443:443"
     volumes:
-    - ./nginx.conf:/etc/nginx/nginx.conf
-    - ./etc/letsencrypt/live/${HOSTNAME}:/etc/letsencrypt/live/${HOSTNAME}
+    - ./nginx.conf:/etc/nginx/templates/nginx.conf.template
+    - /etc/letsencrypt/live/${HOSTNAME}:/etc/letsencrypt/live/${HOSTNAME}
+    environment:
+      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
+    env_file:
+      - .env
