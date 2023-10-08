@@ -10,6 +10,8 @@ jobs:
     environment: production
     steps:
     - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: npm ci
     - name: Run validations
       run: npm run validate
     - name: Set up Docker Buildx
