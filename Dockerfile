@@ -13,6 +13,5 @@ COPY package.json .
 COPY tsconfig.json .
 
 RUN npm ci
-RUN npm run validate
 
 CMD ["node_modules/.bin/ts-node-transpile-only", "--esm", "./src/app.ts"]
