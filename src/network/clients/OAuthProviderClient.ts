@@ -26,7 +26,7 @@ export class OAuthProviderClient {
       params.toString(),
       { baseURL: OAUTH_PROVIDER_BASE_URL }
     );
-  
+
     return {
       accessToken: response.data.access_token,
       expiresAtMs: Date.now() + response.data.expires_in * 1000,
