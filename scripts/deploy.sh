@@ -1,4 +1,8 @@
 #!/bin/bash
-sudo docker compose pull --quiet
-sudo docker compose up -d
-sudo docker image prune -f
+set -eu
+
+docker compose pull
+docker compose up -d
+docker image prune -f
+
+exit 0
