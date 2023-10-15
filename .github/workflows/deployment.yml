@@ -45,7 +45,11 @@ jobs:
         SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
     - name: Run deploy script over SSH
       run: |
-        ssh -i ~/.ssh/ssh_private_key -p $SSH_PORT $SSH_USERNAME@$SSH_HOSTNAME "cd ~/unclassified-photos && ./scripts/deploy.sh"
+        git pull
+        ssh \
+          -i ~/.ssh/ssh_private_key \
+          -p $SSH_PORT $SSH_USERNAME@$SSH_HOSTNAME \
+          "cd ~/unclassified-photos && git pull && ./scripts/deploy.sh"
       env:
         SSH_PORT: ${{ secrets.SSH_PORT }}
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
