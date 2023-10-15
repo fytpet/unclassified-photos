@@ -95,7 +95,7 @@ describe("given unauthenticated session", () => {
 
   describe("when navigating to home route", () => {
     whenNavigatingTo(HOME_ROUTE);
-  
+
     test("then renders sign-in page", () => thenRenders(SIGN_IN_PAGE));
   });
 
@@ -164,8 +164,8 @@ describe("given session", () => {
 
   describe("when navigating to oauth route", () => {
     whenNavigatingTo(OAUTH_ROUTE);
-  
-    test("then user is redirected to oauth provider", () => 
+
+    test("then user is redirected to oauth provider", () =>
       expect(redirect).toHaveBeenCalledWith(expectedOAuthProviderUrl())
     );
   });

@@ -14,7 +14,7 @@ export class PhotosLibraryCursor<T> {
 
   async readNextPage() {
     const { results, nextPageToken } = await this.fetchPage(this.params);
-  
+
     this.params.setNextPage(nextPageToken);
 
     return results?.filter(Boolean) ?? [];
@@ -26,10 +26,10 @@ export class PhotosLibraryCursor<T> {
 
   async readAll() {
     const results: T[] = [];
-  
+
     do results.push(...await this.readNextPage());
     while (this.hasNextPage());
-  
+
     return results;
   }
 }

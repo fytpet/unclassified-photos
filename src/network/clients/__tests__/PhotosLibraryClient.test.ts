@@ -8,7 +8,7 @@ vi.mock("../ApiClient", () => ({
 import type { Album } from "../../../types/types.js";
 import { PhotosLibraryClient } from "../PhotosLibraryClient.js";
 
-const SOME_BEARER_TOKEN = "98123713afa113";
+const FAKE_TEST_BEARER_TOKEN = "98123713afa113";
 
 const SOME_ALBUM: Album = {
   id: "91816",
@@ -21,7 +21,7 @@ const SOME_ALBUM: Album = {
 
 describe("PhotosLibraryClient", () => {
   it("should return empty list when albums response is empty", async () => {
-    const client = new PhotosLibraryClient(SOME_BEARER_TOKEN);
+    const client = new PhotosLibraryClient(FAKE_TEST_BEARER_TOKEN);
 
     const actual = await client.fetchAllAlbums();
 
@@ -29,7 +29,7 @@ describe("PhotosLibraryClient", () => {
   });
 
   it("should return empty list when photos of album response is empty", async () => {
-    const client = new PhotosLibraryClient(SOME_BEARER_TOKEN);
+    const client = new PhotosLibraryClient(FAKE_TEST_BEARER_TOKEN);
 
     const actual = await client.fetchAllPhotosOfAlbum(SOME_ALBUM);
 

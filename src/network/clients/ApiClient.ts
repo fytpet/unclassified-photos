@@ -14,7 +14,7 @@ export class ApiClient {
       baseURL: PHOTOS_LIBRARY_BASE_URL,
       headers: {
         common: {
-          "Authorization" : accessToken && `Bearer ${accessToken}`,
+          "Authorization" : accessToken ? `Bearer ${accessToken}` : null,
           "Content-Type": "application/json"
         }
       },

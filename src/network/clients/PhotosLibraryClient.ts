@@ -28,7 +28,7 @@ export class PhotosLibraryClient {
     return { results: data.mediaItems, nextPageToken: data.nextPageToken };
   };
 
-  async fetchAllAlbums() {  
+  async fetchAllAlbums() {
     const cursor = new PhotosLibraryCursor<Album>(
       new PhotosLibrarySearchParams(ALBUM_PAGE_SIZE),
       this.fetchAlbums

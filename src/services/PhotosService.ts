@@ -19,7 +19,7 @@ export class PhotosService {
 
     let unclassifiedPhotos: Photo[] = [];
     const cursor = new PhotosCursor(this.photosLibraryClient);
-  
+
     do {
       const photos = await cursor.readNextPage();
       unclassifiedPhotos = unclassifiedPhotos.concat(photos.filter((photo) => !classifiedIds.has(photo.id)));
