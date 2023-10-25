@@ -24,7 +24,12 @@ export class OAuthProviderClient {
     const response = await this.apiClient.post<AccessTokenResponse>(
       "/token",
       params.toString(),
-      { baseURL: OAUTH_PROVIDER_BASE_URL }
+      {
+        baseURL: OAUTH_PROVIDER_BASE_URL,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        }
+      }
     );
 
     return {
@@ -44,7 +49,12 @@ export class OAuthProviderClient {
     const response = await this.apiClient.post<RefreshTokenResponse>(
       "/token",
       params.toString(),
-      { baseURL: OAUTH_PROVIDER_BASE_URL }
+      {
+        baseURL: OAUTH_PROVIDER_BASE_URL,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        }
+      }
     );
 
     return {
