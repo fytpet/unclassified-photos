@@ -16,7 +16,7 @@
     "validate": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "connect-redis": "^7.1.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
