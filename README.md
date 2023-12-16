@@ -4,7 +4,7 @@
 Finds your Google Photos media items that are not in any of your albums.
 
 ## Hosted here
-https://unclassifiedphotos.com
+https://photos.fytilis.com
 
 ## How to use
 1. Click the `Sign in with Google` button to sign in using Google's OAuth 2.0 flow.
