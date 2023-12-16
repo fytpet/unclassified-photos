@@ -35,6 +35,8 @@ jobs:
         DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
     - name: Setup SSH
       run: |
+        set -e
+        trap 'echo "Error occurred on line $LINENO"; exit 1' ERR
         mkdir ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_private_key
         chmod 600 ~/.ssh/ssh_private_key
