@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     depends_on:
     - redis
-    ports:
-    - "${PORT}:${PORT}"
     volumes:
     - ./logs:/app/logs
     env_file:
@@ -16,8 +14,6 @@ services:
     image: "redis:7.0-alpine"
     container_name: redis
     restart: unless-stopped
-    ports:
-    - "6379:6379"
     volumes:
     - ./data:/data
   nginx:
