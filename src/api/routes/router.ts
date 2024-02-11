@@ -1,5 +1,6 @@
 import type { Request } from "express";
 import express from "express";
+import { register } from "prom-client";
 import { EXPIRED_SESSION_ERR_MSG } from "../../exceptions/errorMessages.js";
 import { UserFriendlyError } from "../../exceptions/UserFriendlyError.js";
 import { Logger } from "../../logging/Logger.js";
@@ -60,6 +61,16 @@ router.get("/health", (_, res) => {
     .catch(err => {
       Logger.error(err);
       res.status(503).send();
+    });
+});
+
+router.get("/metrics", (_, res) => {
+  res.set("Content-Type", register.contentType);
+  register.metrics()
+    .then((metrics) => res.end(metrics))
+    .catch((err) => {
+      Logger.error(err);
+      res.status(500).end(err);
     });
 });
 
