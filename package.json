@@ -20,7 +20,7 @@
     "connect-redis": "^7.1.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.10",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "express-session": "^1.17.3",
     "helmet": "^6.2.0",
     "prom-client": "^15.1.0",
