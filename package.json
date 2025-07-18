@@ -21,7 +21,7 @@
     "dotenv": "^16.3.1",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
-    "express-session": "^1.18.1",
+    "express-session": "^1.18.2",
     "helmet": "^6.2.0",
     "prom-client": "^15.1.0",
     "redis": "^4.6.10",
