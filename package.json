@@ -6,7 +6,7 @@
   "main": "./src/app.ts",
   "type": "module",
   "scripts": {
-    "start": "ts-node --esm ./src/app.ts",
+    "start": "node --loader ts-node/esm ./src/app.ts",
     "sass": "node-sass sass/global.scss public/global.css --output-style compressed",
     "test": "vitest --no-watch",
     "test:watch": "vitest",
@@ -16,7 +16,7 @@
     "validate": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
-    "axios": "^1.7.4",
+    "axios": "^1.11.0",
     "connect-redis": "^7.1.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.10",
