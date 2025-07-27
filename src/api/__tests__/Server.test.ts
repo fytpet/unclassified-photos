@@ -78,10 +78,12 @@ function thenRenders(expected: string) {
   expect(response.data).toContain(expected);
 }
 
-afterEach(() => {
+afterEach(async () => {
   delete axios.defaults.headers["Cookie"];
   server.close();
   vi.useRealTimers();
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
 });
 
 describe("given unauthenticated session", () => {
