@@ -8,7 +8,7 @@ import {
 } from "../../exceptions/errorMessages.js";
 import { Server } from "../Server.js";
 import { photoFixture, SOME_ERROR_MESSAGE, SOME_REDIRECT_CODE } from "./constants.js";
-import type { SpyInstance } from "vitest";
+import type { MockInstance } from "vitest";
 
 const SIGN_IN_PAGE = "You first need to sign in with Google";
 const HOME_PAGE = "<span>Search</span>";
@@ -27,7 +27,7 @@ let server: Server;
 let response: AxiosResponse;
 const destroySession = vi.fn().mockImplementation((callback: () => void) => callback());
 const regenerateSession = vi.fn().mockImplementation((callback: () => void) => callback());
-let redirect: SpyInstance = vi.fn();
+let redirect: MockInstance = vi.fn();
 
 function givenUnauthenticatedSession() {
   beforeEach(async () => {
